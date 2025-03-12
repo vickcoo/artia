@@ -13,7 +13,8 @@ struct ArtiaApp: App {
 
     var body: some Scene {
         WindowGroup {
-            ContentView()
+            HomeView()
+                .environmentObject(MissionStore())
                 .environment(\.managedObjectContext, persistenceController.container.viewContext)
         }
     }
