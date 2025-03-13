@@ -1,22 +1,36 @@
 import Foundation
 import SwiftUI
 
-struct Mission: Identifiable, Equatable {
+class Mission: Identifiable, ObservableObject {
     let id: UUID = .init()
     let title: String
     let description: String
     let status: MissionStatus
     let type: MissionType
     let story: Story?
-    var conditions: [MissionCondition]
+    var conditions: [any MissionCondition]
     let rewards: [MissionReward]
 
-    var isCompletedConditions: Bool {
-        conditions.allSatisfy { $0.isCompleted }
+    @Published var isCompleted: Bool = false
+
+    init(title: String, description: String, status: MissionStatus, type: MissionType, story: Story?, conditions: [any MissionCondition], rewards: [MissionReward]) {
+        self.title = title
+        self.description = description
+        self.status = status
+        self.type = type
+        self.story = story
+        self.conditions = conditions
+        self.rewards = rewards
     }
 
-    var isUncompleted: Bool {
-        conditions.contains(where: { $0.isCompleted == false })
+    func updateCompleted() {
+        isCompleted = conditions.allSatisfy { $0.isCompleted() }
+    }
+}
+
+extension Mission: Equatable {
+    static func == (lhs: Mission, rhs: Mission) -> Bool {
+        lhs.id == rhs.id
     }
 }
 

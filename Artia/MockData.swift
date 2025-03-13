@@ -18,8 +18,7 @@ enum MockData {
             content: "The fate of the kingdom rests in your hands"
         ),
         conditions: [
-            MissionCondition(title: "Capture Battle Scene", strategy: ImageConditionStrategy(goal: 3, images: [])),
-            MissionCondition(title: "Walk Steps", strategy: HealthKitConditionStrategy(goal: 1000, healthType: .steps, progress: 0)),
+            ImageCondition(title: "Capture Battle Scene", goal: 1, value: [])
         ],
         rewards: [
             MissionReward(title: "A Sword", description: "Drop by Dragon King"),
@@ -37,7 +36,7 @@ enum MockData {
                 content: "The fate of the kingdom rests in your hands"
             ),
             conditions: [
-                MissionCondition(title: "Capture Battle Scene", strategy: ImageConditionStrategy(goal: 3, images: [])),
+                ImageCondition(title: "Capture Battle Scene", goal: 3, value: [])
             ],
             rewards: []
         ),
@@ -51,7 +50,7 @@ enum MockData {
                 content: "The Wizard needs these for research"
             ),
             conditions: [
-                MissionCondition(title: "Crystal Collection Photos", strategy: ImageConditionStrategy(goal: 5, images: [])),
+                ImageCondition(title: "Crystal Collection Photos", goal: 5, value: [])
             ],
             rewards: []
         ),
@@ -65,7 +64,7 @@ enum MockData {
                 content: "Practice makes perfect"
             ),
             conditions: [
-                MissionCondition(title: "Workout Tracking", strategy: HealthKitConditionStrategy(goal: 300, healthType: .calories, progress: 0)),
+                HealthKitCondition(healthType: .calories, title: "Workout Tracking", value: 0, goal: 300)
             ],
             rewards: []
         ),
@@ -79,8 +78,8 @@ enum MockData {
                 content: "Dark forces are at work"
             ),
             conditions: [
-                MissionCondition(title: "Evidence Photos", strategy: ImageConditionStrategy(goal: 5, images: [])),
-                MissionCondition(title: "Physical Condition Monitor", strategy: HealthKitConditionStrategy(goal: 500, healthType: .calories, progress: 0)),
+                ImageCondition(title: "Evidence Photos", goal: 5, value: []),
+                HealthKitCondition(healthType: .calories, title: "Physical Condition Monitor", value: 0, goal: 500)
             ],
             rewards: []
         ),
@@ -94,7 +93,7 @@ enum MockData {
                 content: "Upgrade your gear"
             ),
             conditions: [
-                MissionCondition(title: "Weapon Upgrade Proof", strategy: ImageConditionStrategy(goal: 1, images: [])),
+                ImageCondition(title: "Weapon Upgrade Proof", goal: 1, value: [])
             ],
             rewards: []
         ),

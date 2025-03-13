@@ -30,7 +30,7 @@ struct MissionsView: View {
 }
 
 struct MissionCard: View {
-    let mission: Mission
+    @State var mission: Mission
     @State private var showingDetail = false
 
     var body: some View {
@@ -52,7 +52,7 @@ struct MissionCard: View {
             showingDetail = true
         }
         .sheet(isPresented: $showingDetail) {
-            MissionDetailView(mission: mission)
+            MissionDetailView(mission: $mission)
         }
     }
 }

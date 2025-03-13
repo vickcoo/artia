@@ -8,40 +8,130 @@
 import Foundation
 import SwiftUI
 
-class MissionCondition: Identifiable, ObservableObject {
-    let id: UUID = .init()
-    let title: String
-    private(set) var strategy: ConditionStrategy
+protocol MissionCondition: Identifiable, ObservableObject {
+    associatedtype ValueType
 
-    init(title: String, strategy: ConditionStrategy) {
-        self.title = title
-        self.strategy = strategy
+    var id: UUID { get }
+    var type: MissionConditionType { get set }
+    var title: String { get set }
+    var value: ValueType { get set }
+    var goal: Double { get set }
+
+    func isCompleted() -> Bool
+}
+
+class AnyMissionCondition: Identifiable, ObservableObject {
+    private var _getValue: () -> Any
+    private var _setValue: (Any) -> Void
+
+    private var _getGoal: () -> Double
+    private var _setGoal: (Double) -> Void
+
+    private var _getTitle: () -> String
+    private var _setTitle: (String) -> Void
+
+    private var _getType: () -> MissionConditionType
+    private var _setType: (MissionConditionType) -> Void
+
+    private var _getIsCompleted: () -> Bool
+
+    @Published var value: Any {
+        didSet { _setValue(value) }
     }
 
-    var isCompleted: Bool {
-        return strategy.isCompleted()
+    @Published var goal: Double {
+        didSet { _setGoal(goal) }
     }
 
-    var type: MissionConditionType {
-        return strategy.type
+    @Published var title: String {
+        didSet { _setTitle(title) }
     }
 
-    var goal: Double {
-        return strategy.goal
+    @Published var type: MissionConditionType {
+        didSet { _setType(type) }
     }
 
-    func setValue(_ value: Any) {
-        strategy.setValue(value)
-    }
+    @Published var isCompleted: Bool
 
-    func getValue() -> Any {
-        return strategy.getValue()
+    init<T: MissionCondition>(_ provider: T) {
+        let mutableProvider = provider
+        _getValue = { mutableProvider.value }
+        _setValue = { newValue in
+            if let typedValue = newValue as? T.ValueType {
+                mutableProvider.value = typedValue
+            }
+        }
+        value = _getValue()
+
+        _getGoal = { mutableProvider.goal }
+        _setGoal = { newValue in
+            mutableProvider.goal = newValue
+        }
+        goal = _getGoal()
+
+        _getTitle = { mutableProvider.title }
+        _setTitle = { newValue in
+            mutableProvider.title = newValue
+        }
+        title = _getTitle()
+
+        _getType = { mutableProvider.type }
+        _setType = { newValue in
+            mutableProvider.type = newValue
+        }
+        type = _getType()
+
+        _getIsCompleted = { mutableProvider.isCompleted() }
+        isCompleted = _getIsCompleted()
     }
 }
 
-extension MissionCondition: Equatable {
-    static func == (lhs: MissionCondition, rhs: MissionCondition) -> Bool {
-        lhs.id == rhs.id
+class ImageCondition: MissionCondition, ObservableObject {
+    typealias ValueType = [UIImage]
+    var type: MissionConditionType = .image
+
+    var id = UUID()
+    var title: String
+    var goal: Double
+    @Published var value: [UIImage]
+
+    init(title: String, goal: Double, value: [UIImage]) {
+        self.title = title
+        self.goal = goal
+        self.value = value
+    }
+
+    func isCompleted() -> Bool {
+        return Double(value.count) >= goal
+    }
+}
+
+class HealthKitCondition: MissionCondition, ObservableObject {
+    typealias ValueType = Double
+    var type: MissionConditionType = .healthKit
+
+    var id = UUID()
+    let healthType: HealthKitConditionType
+    var title: String
+    var value: Double
+    var goal: Double
+
+    init(healthType: HealthKitConditionType, title: String, value: Double, goal: Double) {
+        self.healthType = healthType
+        self.title = title
+        self.value = value
+        self.goal = goal
+    }
+
+    func isCompleted() -> Bool {
+        switch healthType {
+        case .steps:
+            return value >= goal
+        case .calories:
+            return value >= goal
+        case .water:
+            return value >= goal
+        }
     }
 }
 
@@ -54,72 +144,4 @@ enum HealthKitConditionType: Codable, Equatable {
 enum MissionConditionType: Codable, Equatable {
     case image
     case healthKit
-}
-
-protocol ConditionStrategy {
-    var type: MissionConditionType { get }
-    var goal: Double { get }
-    func isCompleted() -> Bool
-
-    func getValue() -> Any
-    mutating func setValue(_ value: Any)
-}
-
-class ImageConditionStrategy: ConditionStrategy {
-    let type: MissionConditionType = .image
-    let goal: Double
-    var images: [UIImage]
-
-    init(goal: Double, images: [UIImage]) {
-        self.goal = goal
-        self.images = images
-    }
-
-    func isCompleted() -> Bool {
-        return Double(images.count) >= goal
-    }
-
-    func getValue() -> Any {
-        return images
-    }
-
-    func setValue(_ value: Any) {
-        if let newImages = value as? [UIImage] {
-            images = newImages
-        }
-    }
-}
-
-class HealthKitConditionStrategy: ConditionStrategy {
-    let type: MissionConditionType = .healthKit
-    let goal: Double
-    let healthType: HealthKitConditionType
-    var progress: Double
-
-    init(goal: Double, healthType: HealthKitConditionType, progress: Double) {
-        self.goal = goal
-        self.healthType = healthType
-        self.progress = progress
-    }
-
-    func isCompleted() -> Bool {
-        switch healthType {
-        case .steps:
-            return progress >= goal
-        case .calories:
-            return progress >= goal
-        case .water:
-            return progress >= goal
-        }
-    }
-
-    func getValue() -> Any {
-        return progress
-    }
-
-    func setValue(_ value: Any) {
-        if let newProgress = value as? Double {
-            progress = newProgress
-        }
-    }
 }
