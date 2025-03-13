@@ -15,7 +15,8 @@ enum MockData {
         type: .main,
         story: Story(
             title: "Main Quest",
-            content: "The fate of the kingdom rests in your hands"
+            content: "The fate of the kingdom rests in your hands",
+            missions: []
         ),
         conditions: [
             ImageCondition(title: "Capture Battle Scene", goal: 1, value: [])
@@ -33,7 +34,8 @@ enum MockData {
             type: .main,
             story: Story(
                 title: "Main Quest",
-                content: "The fate of the kingdom rests in your hands"
+                content: "The fate of the kingdom rests in your hands",
+                missions: []
             ),
             conditions: [
                 ImageCondition(title: "Capture Battle Scene", goal: 3, value: [])
@@ -47,7 +49,8 @@ enum MockData {
             type: .side,
             story: Story(
                 title: "Side Quest",
-                content: "The Wizard needs these for research"
+                content: "The Wizard needs these for research",
+                missions: []
             ),
             conditions: [
                 ImageCondition(title: "Crystal Collection Photos", goal: 5, value: [])
@@ -61,7 +64,8 @@ enum MockData {
             type: .repeat,
             story: Story(
                 title: "Daily Quest",
-                content: "Practice makes perfect"
+                content: "Practice makes perfect",
+                missions: []
             ),
             conditions: [
                 HealthKitCondition(healthType: .calories, title: "Workout Tracking", value: 0, goal: 300)
@@ -75,7 +79,8 @@ enum MockData {
             type: .main,
             story: Story(
                 title: "Main Quest",
-                content: "Dark forces are at work"
+                content: "Dark forces are at work",
+                missions: []
             ),
             conditions: [
                 ImageCondition(title: "Evidence Photos", goal: 5, value: []),
@@ -90,7 +95,8 @@ enum MockData {
             type: .side,
             story: Story(
                 title: "Equipment Quest",
-                content: "Upgrade your gear"
+                content: "Upgrade your gear",
+                missions: []
             ),
             conditions: [
                 ImageCondition(title: "Weapon Upgrade Proof", goal: 1, value: [])

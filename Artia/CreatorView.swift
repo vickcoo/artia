@@ -32,18 +32,21 @@ struct ShortcutButton: View {
 }
 
 struct CreatorView: View {
+    
+    @State private var showCreateStoryView = false
+    
     var body: some View {
         ScrollView {
             LazyVGrid(columns: [
                 GridItem(.flexible(), spacing: 16),
                 GridItem(.flexible(), spacing: 16),
             ], spacing: 16) {
-                ShortcutButton(icon: "plus.circle.fill", title: "新增任務", color: .brown.opacity(0.1)) {
+                ShortcutButton(icon: "plus.circle.fill", title: "Create Mission", color: .brown.opacity(0.1)) {
                     // Action
                 }
 
-                ShortcutButton(icon: "arrow.triangle.branch", title: "新增任務線", color: .brown.opacity(0.1)) {
-                    // Action
+                ShortcutButton(icon: "arrow.triangle.branch", title: "Create Story", color: .brown.opacity(0.1)) {
+                    showCreateStoryView = true
                 }
 
                 ShortcutButton(icon: "plus.circle.fill", title: "新增任務", color: .brown.opacity(0.1)) {
@@ -57,6 +60,10 @@ struct CreatorView: View {
             .padding()
         }
         .background(.primaryBackground)
+        .sheet(isPresented: $showCreateStoryView) {
+            CreateStoryView()
+                .interactiveDismissDisabled()
+        }
     }
 }
 

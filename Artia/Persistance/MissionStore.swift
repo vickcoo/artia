@@ -8,6 +8,7 @@
 import Foundation
 
 class MissionStore: ObservableObject {
+    @Published var stories: [Story] = []
     @Published var missions: [Mission] = MockData.tasks
     @Published var selectedMission: Mission?
 
@@ -22,12 +23,20 @@ class MissionStore: ObservableObject {
         }
     }
 
-    func updateTask(_ mission: Mission) async throws {
+    func updateMission(_ mission: Mission) async throws {
         if let index = missions.firstIndex(where: { $0.id == mission.id }) {
             missions[index] = mission
             if selectedMission?.id == mission.id {
                 selectedMission = mission
             }
         }
+    }
+
+    func addStory(_ story: Story) {
+        stories.append(story)
+    }
+
+    func deleteStory(_ story: Story) {
+        stories.removeAll { $0.id == story.id }
     }
 }

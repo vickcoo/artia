@@ -77,4 +77,5 @@ struct Story: Identifiable, Equatable {
     let id: UUID = .init()
     var title: String
     var content: String
+    var missions: [Mission]
 }
