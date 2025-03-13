@@ -36,7 +36,7 @@ private struct StatBox: View {
                 .fontWeight(.bold)
                 .foregroundStyle(.white)
 
-            Text(title)
+            Text(type.text)
                 .font(.caption)
                 .foregroundColor(.white)
         }
@@ -44,30 +44,8 @@ private struct StatBox: View {
         .padding()
         .background(
             RoundedRectangle(cornerRadius: 12)
-                .fill(Color(color))
+                .fill(Color(type.color))
         )
-    }
-
-    private var title: String {
-        switch type {
-        case .main:
-            return "Main"
-        case .side:
-            return "Side"
-        case .repeat:
-            return "Repeat"
-        }
-    }
-
-    private var color: Color {
-        switch type {
-        case .main:
-            return .mainTaskYellow
-        case .side:
-            return .sideTaskBlue
-        case .repeat:
-            return .repeatTaskGreen
-        }
     }
 }
 

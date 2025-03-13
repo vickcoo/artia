@@ -10,12 +10,12 @@ struct MissionDetailView: View {
         VStack {
             ScrollView {
                 VStack(alignment: .center, spacing: 20) {
-                    Text(typeText)
+                    Text(mission.type.text)
                         .font(.caption)
                         .foregroundColor(.white)
                         .padding(.horizontal, 12)
                         .padding(.vertical, 6)
-                        .background(typeColor)
+                        .background(mission.type.color)
                         .clipShape(Capsule())
 
                     Text(mission.title)
@@ -65,28 +65,6 @@ struct MissionDetailView: View {
         .onAppear {
             mission.updateCompleted()
             tempWalkaroundIsCompleted = mission.isCompleted
-        }
-    }
-
-    private var typeText: String {
-        switch mission.type {
-        case .main:
-            return "Main"
-        case .side:
-            return "Side"
-        case .repeat:
-            return "Repeat"
-        }
-    }
-
-    private var typeColor: Color {
-        switch mission.type {
-        case .main:
-            return .mainTaskYellow
-        case .side:
-            return .sideTaskBlue
-        case .repeat:
-            return .repeatTaskGreen
         }
     }
 }

@@ -43,6 +43,28 @@ enum MissionType: String, Codable {
     case main
     case side
     case `repeat`
+    
+    var text: String {
+        switch self {
+        case .main:
+            return "Main"
+        case .side:
+            return "Side"
+        case .repeat:
+            return "Repeat"
+        }
+    }
+    
+    var color: Color {
+        switch self {
+        case .main:
+            return .mainTaskYellow
+        case .side:
+            return .sideTaskBlue
+        case .repeat:
+            return .repeatTaskGreen
+        }
+    }
 }
 
 struct MissionReward: Identifiable, Equatable {
