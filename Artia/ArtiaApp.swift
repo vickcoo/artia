@@ -16,6 +16,7 @@ struct ArtiaApp: App {
             HomeView()
                 .environmentObject(MissionStore())
                 .environment(\.managedObjectContext, persistenceController.container.viewContext)
+                .preferredColorScheme(.light)
         }
     }
 }

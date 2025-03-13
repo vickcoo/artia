@@ -40,7 +40,9 @@ enum MockData {
             conditions: [
                 ImageCondition(title: "Capture Battle Scene", goal: 3, value: [])
             ],
-            rewards: []
+            rewards: [
+                MissionReward(title: "A Sword", description: "Drop by Dragon King"),
+            ]
         ),
         Mission(
             title: "Collect 10 Magic Crystals",

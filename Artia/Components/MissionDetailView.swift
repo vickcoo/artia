@@ -80,7 +80,7 @@ private struct RewardView: View {
 
             ForEach(rewards) { reward in
                 HStack {
-                    Image(systemName: "staroflife.fill")
+                    Image(systemName: "seal.fill")
                     Text(reward.title)
                 }
             }
