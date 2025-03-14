@@ -32,9 +32,10 @@ struct ShortcutButton: View {
 }
 
 struct CreatorView: View {
-    
+    @EnvironmentObject private var store: MissionStore
+    @State private var showCreateMissionView = false
     @State private var showCreateStoryView = false
-    
+
     var body: some View {
         ScrollView {
             LazyVGrid(columns: [
@@ -42,10 +43,10 @@ struct CreatorView: View {
                 GridItem(.flexible(), spacing: 16),
             ], spacing: 16) {
                 ShortcutButton(icon: "plus.circle.fill", title: "Create Mission", color: .brown.opacity(0.1)) {
-                    // Action
+                    showCreateMissionView = true
                 }
 
-                ShortcutButton(icon: "arrow.triangle.branch", title: "Create Story", color: .brown.opacity(0.1)) {
+                ShortcutButton(icon: "book", title: "Create Story", color: .brown.opacity(0.1)) {
                     showCreateStoryView = true
                 }
 
@@ -62,6 +63,10 @@ struct CreatorView: View {
         .background(.primaryBackground)
         .sheet(isPresented: $showCreateStoryView) {
             CreateStoryView()
+                .interactiveDismissDisabled()
+        }
+        .sheet(isPresented: $showCreateMissionView) {
+            CreateMissionView()
                 .interactiveDismissDisabled()
         }
     }

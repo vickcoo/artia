@@ -12,8 +12,10 @@ class MissionStore: ObservableObject {
     @Published var missions: [Mission] = MockData.tasks
     @Published var selectedMission: Mission?
 
-    func createMission(_ mission: Mission) async throws {
-        missions.append(mission)
+    func createMission(_ mission: Mission) {
+        DispatchQueue.main.async {
+            self.missions.append(mission)
+        }
     }
 
     func deleteMission(_ mission: Mission) async throws {
@@ -21,6 +23,10 @@ class MissionStore: ObservableObject {
         if selectedMission?.id == mission.id {
             selectedMission = nil
         }
+    }
+    
+    func deleteMission(_ index: IndexSet) async throws {
+        // missions.remove(at: index)
     }
 
     func updateMission(_ mission: Mission) async throws {
