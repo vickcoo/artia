@@ -26,9 +26,14 @@ struct ChipView: View {
                     Text("All")
                         .padding(.horizontal, 16)
                         .padding(.vertical, 8)
-                        .background(selectedOptionId == nil ? Color.brown : Color.gray.opacity(0.3))
                         .foregroundColor(selectedOptionId == nil ? .white : .primary)
-                        .cornerRadius(20)
+                        .background(
+                            RoundedRectangle(cornerRadius: 20)
+                                .stroke(Color.cardBorder, lineWidth: 1)
+                                .background(
+                                    (selectedOptionId == nil ? Color.black.opacity(0.7) : Color.white.opacity(0.6)).cornerRadius(20)
+                                )
+                        )
                 }
 
                 ForEach(options) { option in
@@ -38,9 +43,16 @@ struct ChipView: View {
                         Text(option.title)
                             .padding(.horizontal, 16)
                             .padding(.vertical, 8)
-                            .background(selectedOptionId == option.id ? Color.brown : Color.gray.opacity(0.3))
                             .foregroundColor(selectedOptionId == option.id ? .white : .primary)
-                            .cornerRadius(20)
+                            .background(
+                                RoundedRectangle(cornerRadius: 20)
+                                    .stroke(Color.clear, lineWidth: 1)
+                                    .background(
+                                        Color(
+                                            selectedOptionId == option.id ? Color.black.opacity(0.7) : Color.white.opacity(0.6)
+                                        ).cornerRadius(20)
+                                    )
+                            )
                     }
                 }
             }
@@ -48,4 +60,13 @@ struct ChipView: View {
             .padding(.vertical, 8)
         }
     }
+}
+
+#Preview {
+    let id = UUID(uuidString: "00000000-0000-0000-0000-000000000000")!
+    ChipView(selectedOptionId: .constant(id), options: [
+        ChipOption(id: id, title: "Swift"),
+        ChipOption(id: UUID(), title: "Kotlin"),
+        ChipOption(id: UUID(), title: "Dart"),
+    ])
 }

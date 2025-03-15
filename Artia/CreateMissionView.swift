@@ -34,7 +34,7 @@ struct CreateMissionView: View {
                     TextField("Description", text: $description, axis: .vertical)
                         .lineLimit(3 ... 5)
                 }
-                .listRowBackground(Color.brown.opacity(0.1))
+                .listRowBackground(Color(.section))
 
                 Section("Type") {
                     Picker("Mission Type", selection: $selectedMissionType) {
@@ -44,12 +44,12 @@ struct CreateMissionView: View {
                     }
                     .pickerStyle(.segmented)
                 }
-                .listRowBackground(Color.brown.opacity(0.1))
+                .listRowBackground(Color(.section))
 
                 Section("Story (Optional)") {
                     SelectStoryView(selectedStory: $selectedStory, showingStoryPicker: $showingStoryPicker)
                 }
-                .listRowBackground(Color.brown.opacity(0.1))
+                .listRowBackground(Color(.section))
 
                 Section("Conditions") {
                     ConditionListView(conditions: $conditions)
@@ -61,7 +61,7 @@ struct CreateMissionView: View {
                             .foregroundStyle(.black)
                     }
                 }
-                .listRowBackground(Color.brown.opacity(0.1))
+                .listRowBackground(Color(.section))
 
                 Section("Rewards (Optional)") {
                     RewardListView(rewards: $rewards)
@@ -73,14 +73,20 @@ struct CreateMissionView: View {
                             .foregroundStyle(.black)
                     }
                 }
-                .listRowBackground(Color.brown.opacity(0.1))
+                .listRowBackground(Color(.section))
 
                 Section {
-                    Button("Create") {
+                    Button {
                         createMission()
+                    } label: {
+                        Text("Create")
+                            .bold()
+                            .frame(maxWidth: .infinity)
+                            .frame(height: 60)
+                            .foregroundStyle(title.isEmpty ? .buttonDisableForeground : .buttonForeground)
+                            .background(title.isEmpty ? Color(.buttonDisableBackground) : Color(.buttonBackground))
+                            .cornerRadius(16)
                     }
-                    .frame(maxWidth: .infinity)
-                    .foregroundStyle(title.isEmpty ? .gray : .black)
                     .disabled(title.isEmpty)
                 }
             }
@@ -273,7 +279,7 @@ struct StoryPickerView: View {
     var body: some View {
         NavigationStack {
             List {
-                ForEach(stories) { story in
+                ForEach(MockData.stories) { story in
                     Button(action: {
                         selectedStory = story
                         dismiss()
@@ -289,6 +295,7 @@ struct StoryPickerView: View {
                     .foregroundColor(.primary)
                 }
             }
+            .listStyle(PlainListStyle())
             .scrollContentBackground(.hidden)
             .background(Color.primaryBackground)
             .navigationTitle("Select Story")
@@ -324,7 +331,7 @@ struct AddConditionView: View {
                     }
                     .pickerStyle(.segmented)
                 }
-                .listRowBackground(Color.brown.opacity(0.1))
+                .listRowBackground(Color(.section))
 
                 Section("Info") {
                     TextField("Title", text: $conditionTitle)
@@ -345,15 +352,21 @@ struct AddConditionView: View {
                         Stepper("\(Int(conditionGoal))", value: $conditionGoal, in: 1 ... 100)
                     }
                 }
-                .listRowBackground(Color.brown.opacity(0.1))
+                .listRowBackground(Color(.section))
 
                 Section {
-                    Button("Add") {
+                    Button {
                         addCondition()
                         showingAddCondition = false
+                    } label: {
+                        Text("Add")
+                            .bold()
+                            .frame(maxWidth: .infinity)
+                            .frame(height: 60)
+                            .foregroundStyle(conditionTitle.isEmpty ? .buttonDisableForeground : .buttonForeground)
+                            .background(conditionTitle.isEmpty ? Color(.buttonDisableBackground) : Color(.buttonBackground))
+                            .cornerRadius(16)
                     }
-                    .frame(maxWidth: .infinity)
-                    .foregroundStyle(conditionTitle.isEmpty ? .gray : .black)
                     .disabled(conditionTitle.isEmpty)
                 }
             }
@@ -410,15 +423,21 @@ struct AddRewardView: View {
                     TextField("Description", text: $rewardDescription, axis: .vertical)
                         .lineLimit(2 ... 4)
                 }
-                .listRowBackground(Color.brown.opacity(0.1))
+                .listRowBackground(Color(.section))
 
                 Section {
-                    Button("Add") {
+                    Button {
                         addReward()
                         showingAddReward = false
+                    } label: {
+                        Text("Add")
+                            .bold()
+                            .frame(maxWidth: .infinity)
+                            .frame(height: 60)
+                            .foregroundStyle(rewardTitle.isEmpty ? .buttonDisableForeground : .buttonForeground)
+                            .background(rewardTitle.isEmpty ? Color(.buttonDisableBackground) : Color(.buttonBackground))
+                            .cornerRadius(16)
                     }
-                    .frame(maxWidth: .infinity)
-                    .foregroundStyle(rewardTitle.isEmpty ? .gray : .black)
                     .disabled(rewardTitle.isEmpty)
                 }
             }

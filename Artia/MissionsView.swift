@@ -10,7 +10,7 @@ import SwiftUI
 struct MissionsView: View {
     @EnvironmentObject private var store: MissionStore
     var selectedStoryId: UUID?
-    
+
     var filteredMissions: [Mission] {
         if let selectedStoryId = selectedStoryId {
             return store.missions.filter { $0.storyId == selectedStoryId }
@@ -21,16 +21,15 @@ struct MissionsView: View {
 
     var body: some View {
         VStack {
-            MissionTypeStats(missions: filteredMissions)
-
-            Divider()
+            // MissionTypeStats(missions: filteredMissions)
+            // Divider()
 
             ScrollView {
                 LazyVStack(spacing: 16) {
                     let mainMissions = filteredMissions.filter { $0.type == .main }
                     let sideMissions = filteredMissions.filter { $0.type == .side }
                     let repeatMissions = filteredMissions.filter { $0.type == .repeat }
-                    
+
                     if mainMissions.isEmpty == false {
                         Text(mainMissions.first?.type.text ?? "")
                             .font(.title3)
@@ -46,7 +45,7 @@ struct MissionsView: View {
                             }
                         }
                     }
-                    
+
                     if sideMissions.isEmpty == false {
                         Text(sideMissions.first?.type.text ?? "")
                             .font(.title3)
@@ -57,7 +56,7 @@ struct MissionsView: View {
                                 .foregroundStyle(.primary)
                         }
                     }
-                    
+
                     if repeatMissions.isEmpty == false {
                         Text(repeatMissions.first?.type.text ?? "")
                             .font(.title3)
@@ -68,13 +67,13 @@ struct MissionsView: View {
                                 .foregroundStyle(.primary)
                         }
                     }
-                    
+
                     if filteredMissions.isEmpty {
                         VStack(spacing: 20) {
                             Image(systemName: "tray")
                                 .font(.system(size: 50))
                                 .foregroundColor(.gray)
-                            
+
                             if selectedStoryId != nil {
                                 Text("此故事尚無任務")
                                     .font(.headline)
@@ -92,7 +91,6 @@ struct MissionsView: View {
                 .padding()
             }
         }
-        .background(Color.primaryBackground)
     }
 }
 
@@ -111,24 +109,14 @@ struct MissionCard: View {
                 .font(.subheadline)
                 .foregroundColor(.secondary)
                 .lineLimit(2)
-                
-            if let storyId = mission.storyId, let story = store.getStory(by: storyId) {
-                HStack {
-                    Image(systemName: "book.fill")
-                        .foregroundColor(.brown)
-                        .font(.caption)
-                    
-                    Text(story.title)
-                        .font(.caption)
-                        .foregroundColor(.brown)
-                }
-                .padding(.top, 4)
-            }
         }
         .frame(maxWidth: .infinity, alignment: .leading)
         .padding()
-        .background(Color(.tabBarBackground))
-        .cornerRadius(10)
+        .background(
+            RoundedRectangle(cornerRadius: 12)
+                .stroke(Color.cardBorder, lineWidth: 1)
+                .background(Color.secondaryBackground.cornerRadius(12))
+        )
         .onTapGesture {
             showingDetail = true
         }

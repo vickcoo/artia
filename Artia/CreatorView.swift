@@ -18,14 +18,18 @@ struct ShortcutButton: View {
             HStack {
                 Image(systemName: icon)
                     .font(.system(size: 24))
-                    .foregroundColor(.black)
+                    .foregroundColor(.white)
+
                 Text(title)
-                    .font(.system(size: 14, weight: .medium))
-                    .foregroundColor(.black)
+                    .font(.system(size: 13, weight: .bold))
+                    .foregroundColor(.white)
+
+                Spacer()
             }
+            .padding()
             .frame(maxWidth: .infinity)
             .frame(height: 60)
-            .background(color)
+            .background(Color.buttonBackground)
             .cornerRadius(16)
         }
     }
@@ -49,18 +53,9 @@ struct CreatorView: View {
                 ShortcutButton(icon: "book", title: "Create Story", color: .brown.opacity(0.1)) {
                     showCreateStoryView = true
                 }
-
-                ShortcutButton(icon: "plus.circle.fill", title: "新增任務", color: .brown.opacity(0.1)) {
-                    // Action
-                }
-
-                ShortcutButton(icon: "arrow.triangle.branch", title: "新增任務線", color: .brown.opacity(0.1)) {
-                    // Action
-                }
             }
             .padding()
         }
-        .background(.primaryBackground)
         .sheet(isPresented: $showCreateStoryView) {
             CreateStoryView()
                 .interactiveDismissDisabled()

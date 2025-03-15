@@ -24,7 +24,7 @@ struct CreateStoryView: View {
                     TextField("Description", text: $description, axis: .vertical)
                         .lineLimit(4 ... 6)
                 }
-                .listRowBackground(Color.brown.opacity(0.1))
+                .listRowBackground(Color(.section))
 
                 Section("Missions (Optional)") {
                     MissionList(missions: $missions, deleteMission: deleteMission)
@@ -36,14 +36,20 @@ struct CreateStoryView: View {
                             .foregroundStyle(.black)
                     }
                 }
-                .listRowBackground(Color.brown.opacity(0.1))
+                .listRowBackground(Color(.section))
 
                 Section {
-                    Button("Create") {
+                    Button {
                         saveStory()
+                    } label: {
+                        Text("Add")
+                            .bold()
+                            .frame(maxWidth: .infinity)
+                            .frame(height: 60)
+                            .foregroundStyle(title.isEmpty ? .buttonDisableForeground : .buttonForeground)
+                            .background(title.isEmpty ? Color(.buttonDisableBackground) : Color(.buttonBackground))
+                            .cornerRadius(16)
                     }
-                    .frame(maxWidth: .infinity)
-                    .foregroundStyle(title.isEmpty ? .gray : .black)
                     .disabled(title.isEmpty)
                 }
             }
@@ -67,8 +73,7 @@ struct CreateStoryView: View {
         }
     }
 
-    private func deleteMission(at offsets: IndexSet) {
-    }
+    private func deleteMission(at _: IndexSet) {}
 
     private func saveStory() {
         let story = Story(
@@ -77,7 +82,7 @@ struct CreateStoryView: View {
         )
 
         store.addStory(story)
-        
+
         for mission in missions {
             let newMission = Mission(
                 title: mission.title,
@@ -142,7 +147,7 @@ private struct StoryCreateMissionView: View {
                     TextField("Description", text: $newMissionDescription, axis: .vertical)
                         .lineLimit(3 ... 5)
                 }
-                .listRowBackground(Color.brown.opacity(0.1))
+                .listRowBackground(Color(.section))
 
                 Section("Type") {
                     Picker("Type", selection: $selectedMissionType) {
@@ -152,15 +157,21 @@ private struct StoryCreateMissionView: View {
                     }
                     .pickerStyle(.segmented)
                 }
-                .listRowBackground(Color.brown.opacity(0.1))
+                .listRowBackground(Color(.section))
 
                 Section {
-                    Button("Add") {
+                    Button {
                         addMission()
                         showingAddMission = false
+                    } label: {
+                        Text("Add")
+                            .bold()
+                            .frame(maxWidth: .infinity)
+                            .frame(height: 60)
+                            .foregroundStyle(newMissionTitle.isEmpty ? .buttonDisableForeground : .buttonForeground)
+                            .background(newMissionTitle.isEmpty ? Color(.buttonDisableBackground) : Color(.buttonBackground))
+                            .cornerRadius(16)
                     }
-                    .frame(maxWidth: .infinity)
-                    .tint(.black)
                     .disabled(newMissionTitle.isEmpty)
                 }
             }

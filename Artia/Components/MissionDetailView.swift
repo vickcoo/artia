@@ -16,7 +16,7 @@ struct MissionDetailView: View {
                         .foregroundColor(.white)
                         .padding(.horizontal, 12)
                         .padding(.vertical, 6)
-                        .background(mission.type.color)
+                        .background(Color.black)
                         .clipShape(Capsule())
 
                     Text(mission.title)
@@ -53,13 +53,15 @@ struct MissionDetailView: View {
                 .padding()
             }
 
-            Button {} label: {
+            Button {
+            } label: {
                 Text("Finish")
-                    .padding([.leading, .trailing], 16)
-                    .padding([.top, .bottom], 8)
-                    .background(mission.isCompleted ? Color.black : Color.gray)
-                    .foregroundStyle(.white)
-                    .clipShape(RoundedRectangle(cornerRadius: 12))
+                    .bold()
+                    .frame(maxWidth: .infinity)
+                    .frame(height: 60)
+                    .foregroundStyle(!mission.isCompleted ? .buttonDisableForeground : .buttonForeground)
+                    .background(!mission.isCompleted ? Color(.buttonDisableBackground) : Color(.buttonBackground))
+                    .cornerRadius(16)
             }
             .disabled(!mission.isCompleted)
             .padding()
@@ -172,4 +174,5 @@ private struct HealthKitConditionView: View {
 
 #Preview {
     MissionDetailView(mission: MockData.task)
+        .environmentObject(MissionStore())
 }

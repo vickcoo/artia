@@ -8,9 +8,9 @@ enum TabType {
 
 enum Tab: String {
     // User
-    case tasks = "Tasks"
-    case progress = "Progress"
-    
+    case missions = "Missions"
+    case journey = "Journey"
+
     // Creator
     case creator = "Creator"
 }
@@ -19,9 +19,9 @@ struct HomeView: View {
     @EnvironmentObject private var store: MissionStore
 
     @State var selectedTabType: TabType = .user
-    @State var selectedTab: Tab = .tasks
+    @State var selectedTab: Tab = .missions
     @State var selectedStoryId: UUID? = nil
-    
+
     private var storyChipOptions: [ChipOption] {
         store.stories.map { ChipOption(id: $0.id, title: $0.title) }
     }
@@ -33,16 +33,16 @@ struct HomeView: View {
                 selectedTab: $selectedTab
             )
 
-            if selectedTab == .tasks {
+            if selectedTab == .missions {
                 ChipView(selectedOptionId: $selectedStoryId, options: storyChipOptions)
             }
 
             TabView(selection: $selectedTab) {
                 JourneyView()
-                    .tag(Tab.progress)
-                
+                    .tag(Tab.journey)
+
                 MissionsView(selectedStoryId: selectedStoryId)
-                    .tag(Tab.tasks)
+                    .tag(Tab.missions)
 
                 CreatorView()
                     .tag(Tab.creator)
@@ -51,16 +51,16 @@ struct HomeView: View {
             .onChange(of: selectedTabType) {
                 switch selectedTabType {
                 case .user:
-                    selectedTab = .tasks
+                    selectedTab = .missions
                 case .creator:
                     selectedTab = .creator
                 }
             }
             .onChange(of: selectedTab) {
                 switch selectedTab {
-                case .progress:
+                case .journey:
                     selectedTabType = .user
-                case .tasks:
+                case .missions:
                     selectedTabType = .user
                 case .creator:
                     selectedTabType = .creator
@@ -69,7 +69,10 @@ struct HomeView: View {
 
             Spacer()
         }
-        .background(Color(.primaryBackground))
+        .background(
+            AnimationMeshGradientView()
+                .ignoresSafeArea()
+        )
         .ignoresSafeArea(.all, edges: .bottom)
     }
 }
@@ -82,9 +85,9 @@ struct TopTabView: View {
         TabView(selection: $selectedTabType) {
             HStack {
                 Spacer()
-                tabButton(title: Tab.progress.rawValue, image: "map.fill", tab: .progress)
+                tabButton(title: Tab.journey.rawValue, image: "map.fill", tab: .journey)
                 Spacer()
-                tabButton(title: Tab.tasks.rawValue, image: "transmission", tab: .tasks)
+                tabButton(title: Tab.missions.rawValue, image: "transmission", tab: .missions)
                 Spacer()
             }
             .tag(TabType.user)
@@ -99,7 +102,6 @@ struct TopTabView: View {
         .tabViewStyle(PageTabViewStyle(indexDisplayMode: .never))
         .frame(height: 80)
         .padding([.leading, .trailing])
-        .background(Color(.tabBarBackground))
     }
 
     private func tabButton(title: String, image: String, tab: Tab) -> some View {
@@ -114,7 +116,7 @@ struct TopTabView: View {
                     .fontWeight(isSelected ? .bold : .regular)
             }
             .padding()
-            .foregroundColor(isSelected ? .brown : .gray)
+            .foregroundColor(isSelected ? Color.tintPrimary : Color.tintSecondary)
         }
     }
 }

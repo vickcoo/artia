@@ -21,24 +21,20 @@ struct JourneyView: View {
     }
 
     var body: some View {
-        NavigationStack {
-            ScrollView {
-                VStack(spacing: 24) {
-                    OverviewProgressView(missions: store.missions)
+        ScrollView {
+            VStack(spacing: 24) {
+                OverviewProgressView(missions: store.missions)
 
-                    OverviewSection(missions: store.missions)
+                OverviewSection(missions: store.missions)
 
-                    GoalSection(missions: store.missions)
+                GoalSection(missions: store.missions)
 
-                    StoryProgressSection(stories: store.stories)
+                StoryProgressSection(stories: store.stories)
 
-                    AchievementSection(missions: store.missions)
-                }
-                .padding(.horizontal)
+                AchievementSection(missions: store.missions)
             }
-            .background(.primaryBackground)
+            .padding(.horizontal)
         }
-        .background(.clear)
     }
 }
 
@@ -66,48 +62,45 @@ struct OverviewProgressView: View {
     }
 
     var body: some View {
-        HStack {
-            Image(systemName: "flag.checkered")
-                .font(.system(size: 40))
-                .padding(.trailing, 8)
+        CardView {
+            HStack {
+                Image(systemName: "flag.checkered")
+                    .font(.system(size: 40))
+                    .padding(.trailing, 8)
 
-            VStack(alignment: .leading, spacing: 4) {
-                HStack(alignment: .center) {
-                    GeometryReader { geometry in
-                        ZStack(alignment: .leading) {
-                            Rectangle()
-                                .frame(width: geometry.size.width, height: 8)
-                                .opacity(0.3)
-                                .foregroundColor(.gray)
-                                .cornerRadius(4)
+                VStack(alignment: .leading, spacing: 4) {
+                    HStack(alignment: .center) {
+                        GeometryReader { geometry in
+                            ZStack(alignment: .leading) {
+                                Rectangle()
+                                    .frame(width: geometry.size.width, height: 8)
+                                    .opacity(0.3)
+                                    .foregroundColor(.gray)
+                                    .cornerRadius(4)
 
-                            Rectangle()
-                                .frame(width: geometry.size.width * CGFloat(storyProgress), height: 8)
-                                .foregroundColor(.purple)
-                                .cornerRadius(4)
+                                Rectangle()
+                                    .frame(width: geometry.size.width * CGFloat(storyProgress), height: 8)
+                                    .foregroundColor(.purple)
+                                    .cornerRadius(4)
+                            }
                         }
+                        .frame(height: 8)
+
+                        Text("\(formatStoryProgress)")
+                            .font(.system(size: 28, weight: .bold))
+                            .foregroundColor(.purple)
                     }
-                    .frame(height: 8)
-
-                    Text("\(formatStoryProgress)")
-                        .font(.system(size: 28, weight: .bold))
-                        .foregroundColor(.purple)
                 }
-            }
 
-            Spacer()
+                Spacer()
+            }
         }
-        .padding()
-        .background(
-            RoundedRectangle(cornerRadius: 16)
-                .stroke(Color.gray.opacity(0.3), lineWidth: 1)
-                .background(Color(.systemBackground).cornerRadius(16))
-        )
     }
 }
 
 // 概覽區域
 struct OverviewSection: View {
+    @EnvironmentObject var store: MissionStore
     let missions: [Mission]
 
     var body: some View {
@@ -120,14 +113,14 @@ struct OverviewSection: View {
                 StatCard(
                     icon: "flame.fill",
                     iconColor: .orange,
-                    value: "\(missions.filter { $0.isCompleted }.count)",
+                    value: "0",
                     label: "Day Streak"
                 )
 
                 StatCard(
                     icon: "timer",
                     iconColor: .red,
-                    value: "\(missions.count)",
+                    value: "0",
                     label: "Finished Story"
                 )
             }
@@ -136,14 +129,14 @@ struct OverviewSection: View {
                 StatCard(
                     icon: "repeat",
                     iconColor: .green,
-                    value: "\(missions.filter { $0.type == .repeat }.count)",
+                    value: "\(missions.filter { $0.isCompleted }.count)",
                     label: "Finished Mission"
                 )
 
                 StatCard(
                     icon: "checkmark",
                     iconColor: .blue,
-                    value: "\(missions.filter { $0.type != .repeat }.count)",
+                    value: "0",
                     label: "Rewards"
                 )
             }
@@ -159,88 +152,33 @@ struct StatCard: View {
     let label: String
 
     var body: some View {
-        VStack(spacing: 8) {
-            HStack {
-                Image(systemName: icon)
-                    .foregroundColor(.white)
-                    .padding(8)
-                    .background(
-                        Circle()
-                            .fill(iconColor)
-                    )
-
-                Spacer()
-
-                Text(value)
-                    .font(.system(size: 24, weight: .bold))
-            }
-
-            HStack {
-                Text(label)
-                    .font(.subheadline)
-                    .foregroundColor(.secondary)
-
-                Spacer()
-            }
-        }
-        .padding()
-        .background(
-            RoundedRectangle(cornerRadius: 16)
-                .stroke(Color.gray.opacity(0.3), lineWidth: 1)
-                .background(Color(.systemBackground).cornerRadius(16))
-        )
-        .frame(maxWidth: .infinity)
-    }
-}
-
-// 故事線篩選器
-struct StoryFilterView: View {
-    @Binding var selectedStoryId: UUID?
-    @Binding var showingStoryPicker: Bool
-    let stories: [Story]
-
-    var body: some View {
-        VStack(alignment: .leading, spacing: 16) {
-            Text("故事線")
-                .font(.title2)
-                .fontWeight(.bold)
-
-            Button(action: {
-                showingStoryPicker = true
-            }) {
+        CardView {
+            VStack(spacing: 8) {
                 HStack {
-                    if let selectedStoryId = selectedStoryId,
-                       let selectedStory = stories.first(where: { $0.id == selectedStoryId })
-                    {
-                        Text(selectedStory.title)
-                            .foregroundColor(.primary)
+                    Image(systemName: icon)
+                        .foregroundColor(.white)
+                        .padding(8)
+                        .background(
+                            Circle()
+                                .fill(iconColor)
+                        )
 
-                        Spacer()
+                    Spacer()
 
-                        Button(action: {
-                            self.selectedStoryId = nil
-                        }) {
-                            Image(systemName: "xmark.circle.fill")
-                                .foregroundColor(.gray)
-                        }
-                    } else {
-                        Text("所有故事線")
-                            .foregroundColor(.primary)
-
-                        Spacer()
-
-                        Image(systemName: "chevron.right")
-                            .foregroundColor(.gray)
-                    }
+                    Text(value)
+                        .font(.system(size: 24, weight: .bold))
                 }
-                .padding()
-                .background(
-                    RoundedRectangle(cornerRadius: 16)
-                        .stroke(Color.gray.opacity(0.3), lineWidth: 1)
-                        .background(Color(.systemBackground).cornerRadius(16))
-                )
+
+                HStack {
+                    Text(label)
+                        .font(.subheadline)
+                        .foregroundColor(.secondary)
+
+                    Spacer()
+                }
             }
         }
+        .frame(maxWidth: .infinity)
     }
 }
 
@@ -256,13 +194,10 @@ struct StoryProgressSection: View {
 
                 Spacer()
 
-                NavigationLink(destination: MissionsView()) {
-                    Image(systemName: "chevron.right")
-                        .foregroundColor(.gray)
-                }
+                Image(systemName: "chevron.right")
+                    .foregroundColor(.gray)
             }
 
-            // 任務列表
             if !stories.isEmpty {
                 ForEach(stories.prefix(3)) { story in
                     StoryProgressCard(story: story)
@@ -322,7 +257,7 @@ struct EmptyGoalView: View {
         .padding()
         .background(
             RoundedRectangle(cornerRadius: 16)
-                .stroke(Color.gray.opacity(0.3), lineWidth: 1)
+                .stroke(Color.cardBorder, lineWidth: 1)
                 .background(Color(.systemBackground).cornerRadius(16))
         )
     }
@@ -339,58 +274,53 @@ struct GoalCard: View {
     }
 
     var body: some View {
-        VStack(alignment: .leading, spacing: 12) {
-            HStack {
-                Image(systemName: "target")
-                    .foregroundColor(.red)
-                    .font(.title2)
+        CardView {
+            VStack(alignment: .leading, spacing: 12) {
+                HStack {
+                    Image(systemName: "target")
+                        .foregroundColor(.red)
+                        .font(.title2)
 
-                Text(mission.title)
-                    .font(.headline)
+                    Text(mission.title)
+                        .font(.headline)
 
-                Spacer()
-            }
+                    Spacer()
+                }
 
-            Text(mission.description)
-                .font(.subheadline)
-                .foregroundColor(.secondary)
-                .lineLimit(2)
+                Text(mission.description)
+                    .font(.subheadline)
+                    .foregroundColor(.secondary)
+                    .lineLimit(2)
 
-            // Progress bar
-            GeometryReader { geometry in
-                ZStack(alignment: .leading) {
-                    Rectangle()
-                        .frame(width: geometry.size.width, height: 8)
-                        .opacity(0.3)
-                        .foregroundColor(.gray)
-                        .cornerRadius(4)
+                GeometryReader { geometry in
+                    ZStack(alignment: .leading) {
+                        Rectangle()
+                            .frame(width: geometry.size.width, height: 8)
+                            .opacity(0.3)
+                            .foregroundColor(.gray)
+                            .cornerRadius(4)
 
-                    Rectangle()
-                        .frame(width: geometry.size.width * CGFloat(progressPercentage), height: 8)
-                        .foregroundColor(mission.type.color)
-                        .cornerRadius(4)
+                        Rectangle()
+                            .frame(width: geometry.size.width * CGFloat(progressPercentage), height: 8)
+                            .foregroundColor(mission.type.color)
+                            .cornerRadius(4)
+                    }
+                }
+                .frame(height: 8)
+
+                HStack {
+                    Text("\(mission.conditions.filter { $0.isCompleted() }.count)/\(mission.conditions.count) Condition Finished")
+                        .font(.caption)
+                        .foregroundColor(.secondary)
+
+                    Spacer()
+
+                    Text("\(Int(progressPercentage * 100))%")
+                        .font(.caption)
+                        .foregroundColor(.secondary)
                 }
             }
-            .frame(height: 8)
-
-            HStack {
-                Text("\(mission.conditions.filter { $0.isCompleted() }.count)/\(mission.conditions.count) Condition Finished")
-                    .font(.caption)
-                    .foregroundColor(.secondary)
-
-                Spacer()
-
-                Text("\(Int(progressPercentage * 100))%")
-                    .font(.caption)
-                    .foregroundColor(.secondary)
-            }
         }
-        .padding()
-        .background(
-            RoundedRectangle(cornerRadius: 16)
-                .stroke(Color.gray.opacity(0.3), lineWidth: 1)
-                .background(Color(.systemBackground).cornerRadius(16))
-        )
     }
 }
 
@@ -412,35 +342,31 @@ struct AchievementSection: View {
                 }
             }
 
-            HStack(spacing: 24) {
-                Spacer()
-                AchievementIcon(
-                    icon: "timer",
-                    isUnlocked: !missions.filter { $0.isCompleted }.isEmpty
-                )
+            CardView {
+                HStack(spacing: 24) {
+                    Spacer()
+                    AchievementIcon(
+                        icon: "timer",
+                        isUnlocked: !missions.filter { $0.isCompleted }.isEmpty
+                    )
 
-                AchievementIcon(
-                    icon: "checkmark",
-                    isUnlocked: missions.filter { $0.isCompleted }.count >= 3
-                )
+                    AchievementIcon(
+                        icon: "checkmark",
+                        isUnlocked: missions.filter { $0.isCompleted }.count >= 3
+                    )
 
-                AchievementIcon(
-                    icon: "repeat",
-                    isUnlocked: !missions.filter { $0.type == .repeat && $0.isCompleted }.isEmpty
-                )
+                    AchievementIcon(
+                        icon: "repeat",
+                        isUnlocked: !missions.filter { $0.type == .repeat && $0.isCompleted }.isEmpty
+                    )
 
-                AchievementIcon(
-                    icon: "crown.fill",
-                    isUnlocked: missions.filter { $0.type == .main && $0.isCompleted }.count >= 1
-                )
-                Spacer()
+                    AchievementIcon(
+                        icon: "crown.fill",
+                        isUnlocked: missions.filter { $0.type == .main && $0.isCompleted }.count >= 1
+                    )
+                    Spacer()
+                }
             }
-            .padding()
-            .background(
-                RoundedRectangle(cornerRadius: 16)
-                    .stroke(Color.gray.opacity(0.3), lineWidth: 1)
-                    .background(Color(.systemBackground).cornerRadius(16))
-            )
             .frame(maxWidth: .infinity)
         }
         .padding(.bottom, 24)
@@ -459,7 +385,7 @@ struct AchievementIcon: View {
                     .frame(width: 50, height: 50)
                     .overlay(
                         Circle()
-                            .stroke(isUnlocked ? Color.gray.opacity(0.3) : Color.clear, lineWidth: 1)
+                            .stroke(isUnlocked ? Color.cardBorder : Color.clear, lineWidth: 1)
                     )
 
                 Image(systemName: icon)
@@ -490,48 +416,43 @@ struct StoryProgressCard: View {
     }
 
     var body: some View {
-        VStack(alignment: .leading, spacing: 12) {
-            HStack {
-                Text(story.title)
-                    .font(.headline)
+        CardView {
+            VStack(alignment: .leading, spacing: 12) {
+                HStack {
+                    Text(story.title)
+                        .font(.headline)
 
-                Spacer()
-            }
+                    Spacer()
+                }
 
-            // 進度條
-            GeometryReader { geometry in
-                ZStack(alignment: .leading) {
-                    Rectangle()
-                        .frame(width: geometry.size.width, height: 8)
-                        .opacity(0.3)
-                        .foregroundColor(.gray)
-                        .cornerRadius(4)
+                GeometryReader { geometry in
+                    ZStack(alignment: .leading) {
+                        Rectangle()
+                            .frame(width: geometry.size.width, height: 8)
+                            .opacity(0.3)
+                            .foregroundColor(.gray)
+                            .cornerRadius(4)
 
-                    Rectangle()
-                        .frame(width: geometry.size.width * CGFloat(progressPercentage), height: 8)
-                        .cornerRadius(4)
+                        Rectangle()
+                            .frame(width: geometry.size.width * CGFloat(progressPercentage), height: 8)
+                            .cornerRadius(4)
+                    }
+                }
+                .frame(height: 8)
+
+                HStack {
+                    Text("\(currentStoryMissions.filter { $0.isCompleted }.count)/\(currentStoryMissions.count) Mission Finished")
+                        .font(.caption)
+                        .foregroundColor(.secondary)
+
+                    Spacer()
+
+                    Text("\(Int(progressPercentage * 100))%")
+                        .font(.caption)
+                        .foregroundColor(.secondary)
                 }
             }
-            .frame(height: 8)
-
-            HStack {
-                Text("\(currentStoryMissions.filter { $0.isCompleted }.count)/\(currentStoryMissions.count) Mission Finished")
-                    .font(.caption)
-                    .foregroundColor(.secondary)
-
-                Spacer()
-
-                Text("\(Int(progressPercentage * 100))%")
-                    .font(.caption)
-                    .foregroundColor(.secondary)
-            }
         }
-        .padding()
-        .background(
-            RoundedRectangle(cornerRadius: 16)
-                .stroke(Color.gray.opacity(0.3), lineWidth: 1)
-                .background(Color(.systemBackground).cornerRadius(16))
-        )
     }
 }
 
@@ -552,8 +473,8 @@ struct EmptyStateView: View {
         .padding()
         .background(
             RoundedRectangle(cornerRadius: 16)
-                .stroke(Color.gray.opacity(0.3), lineWidth: 1)
-                .background(Color(.systemBackground).cornerRadius(16))
+                .stroke(Color.cardBorder, lineWidth: 1)
+                .background(Color(.secondaryBackground).cornerRadius(16))
         )
     }
 }
