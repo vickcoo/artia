@@ -16,6 +16,11 @@ struct HomeView: View {
 
     @State var selectedTabType: TabType = .user
     @State var selectedTab: Tab = .tasks
+    @State var selectedStoryId: UUID? = nil
+    
+    private var storyChipOptions: [ChipOption] {
+        store.stories.map { ChipOption(id: $0.id, title: $0.title) }
+    }
 
     var body: some View {
         VStack {
@@ -24,8 +29,12 @@ struct HomeView: View {
                 selectedTab: $selectedTab
             )
 
+            if selectedTab == .tasks {
+                ChipView(selectedOptionId: $selectedStoryId, options: storyChipOptions)
+            }
+
             TabView(selection: $selectedTab) {
-                MissionsView()
+                MissionsView(selectedStoryId: selectedStoryId)
                     .tag(Tab.tasks)
 
                 CreatorView()

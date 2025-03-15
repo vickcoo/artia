@@ -9,18 +9,28 @@ import SwiftUI
 
 struct MissionsView: View {
     @EnvironmentObject private var store: MissionStore
+    var selectedStoryId: UUID?
+    
+    var filteredMissions: [Mission] {
+        if let selectedStoryId = selectedStoryId {
+            return store.missions.filter { $0.storyId == selectedStoryId }
+        } else {
+            return store.missions
+        }
+    }
 
     var body: some View {
         VStack {
-            MissionTypeStats(missions: store.missions)
+            MissionTypeStats(missions: filteredMissions)
 
             Divider()
 
             ScrollView {
                 LazyVStack(spacing: 16) {
-                    let mainMissions = store.missions.filter { $0.type == .main }
-                    let sideMissions = store.missions.filter { $0.type == .side }
-                    let repeatMissions = store.missions.filter { $0.type == .repeat }
+                    let mainMissions = filteredMissions.filter { $0.type == .main }
+                    let sideMissions = filteredMissions.filter { $0.type == .side }
+                    let repeatMissions = filteredMissions.filter { $0.type == .repeat }
+                    
                     if mainMissions.isEmpty == false {
                         Text(mainMissions.first?.type.text ?? "")
                             .font(.title3)
@@ -31,6 +41,7 @@ struct MissionsView: View {
                                 .foregroundStyle(.primary)
                         }
                     }
+                    
                     if sideMissions.isEmpty == false {
                         Text(sideMissions.first?.type.text ?? "")
                             .font(.title3)
@@ -41,6 +52,7 @@ struct MissionsView: View {
                                 .foregroundStyle(.primary)
                         }
                     }
+                    
                     if repeatMissions.isEmpty == false {
                         Text(repeatMissions.first?.type.text ?? "")
                             .font(.title3)
@@ -50,6 +62,26 @@ struct MissionsView: View {
                             MissionCard(mission: mission)
                                 .foregroundStyle(.primary)
                         }
+                    }
+                    
+                    if filteredMissions.isEmpty {
+                        VStack(spacing: 20) {
+                            Image(systemName: "tray")
+                                .font(.system(size: 50))
+                                .foregroundColor(.gray)
+                            
+                            if selectedStoryId != nil {
+                                Text("此故事尚無任務")
+                                    .font(.headline)
+                                    .foregroundColor(.gray)
+                            } else {
+                                Text("尚無任務")
+                                    .font(.headline)
+                                    .foregroundColor(.gray)
+                            }
+                        }
+                        .frame(maxWidth: .infinity)
+                        .padding(.top, 50)
                     }
                 }
                 .padding()
@@ -62,6 +94,7 @@ struct MissionsView: View {
 struct MissionCard: View {
     @ObservedObject var mission: Mission
     @State private var showingDetail = false
+    @EnvironmentObject private var store: MissionStore
 
     var body: some View {
         VStack(alignment: .leading, spacing: 8) {
@@ -73,6 +106,19 @@ struct MissionCard: View {
                 .font(.subheadline)
                 .foregroundColor(.secondary)
                 .lineLimit(2)
+                
+            if let storyId = mission.storyId, let story = store.getStory(by: storyId) {
+                HStack {
+                    Image(systemName: "book.fill")
+                        .foregroundColor(.brown)
+                        .font(.caption)
+                    
+                    Text(story.title)
+                        .font(.caption)
+                        .foregroundColor(.brown)
+                }
+                .padding(.top, 4)
+            }
         }
         .frame(maxWidth: .infinity, alignment: .leading)
         .padding()
