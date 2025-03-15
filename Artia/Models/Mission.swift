@@ -1,7 +1,7 @@
 import Foundation
 import SwiftUI
 
-class Mission: Identifiable, ObservableObject {
+final class Mission: Identifiable, ObservableObject {
     let id: UUID
     let title: String
     let description: String
@@ -10,8 +10,6 @@ class Mission: Identifiable, ObservableObject {
     let storyId: UUID?
     @Published var conditions: [any MissionCondition]
     let rewards: [MissionReward]
-
-    @Published var isCompleted: Bool = false
 
     init(id: UUID = UUID(), title: String, description: String, status: MissionStatus, type: MissionType, storyId: UUID?, conditions: [any MissionCondition], rewards: [MissionReward]) {
         self.id = id
@@ -23,9 +21,9 @@ class Mission: Identifiable, ObservableObject {
         self.conditions = conditions
         self.rewards = rewards
     }
-
-    func updateCompleted() {
-        isCompleted = conditions.allSatisfy { $0.isCompleted() }
+    
+    var isCompleted: Bool {
+        conditions.allSatisfy { $0.isCompleted() }
     }
 }
 

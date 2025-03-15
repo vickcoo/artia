@@ -36,9 +36,14 @@ struct MissionsView: View {
                             .font(.title3)
                             .fontWeight(.bold)
                             .foregroundStyle(.primary)
-                        ForEach(mainMissions) { mission in
-                            MissionCard(mission: mission)
-                                .foregroundStyle(.primary)
+                        ForEach(mainMissions.indices) { index in
+                            let mission = mainMissions[index]
+                            if let idx = mainMissions.firstIndex(of: mission) {
+                                MissionCard(mission: store.missions[idx])
+                                    .foregroundStyle(.primary)
+                            } else {
+                                Text("No Mission")
+                            }
                         }
                     }
                     

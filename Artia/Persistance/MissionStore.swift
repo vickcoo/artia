@@ -37,6 +37,10 @@ class MissionStore: ObservableObject {
             }
         }
     }
+    
+    func getMission(by id: UUID?) -> Mission? {
+        missions.first { $0.id == id }
+    }
 }
 
 extension MissionStore {
@@ -48,7 +52,7 @@ extension MissionStore {
         stories.removeAll { $0.id == story.id }
     }
 
-    func getStory(by id: UUID) -> Story? {
+    func getStory(by id: UUID?) -> Story? {
         stories.first { $0.id == id }
     }
 }

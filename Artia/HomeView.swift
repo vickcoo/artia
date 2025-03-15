@@ -7,7 +7,11 @@ enum TabType {
 }
 
 enum Tab: String {
+    // User
     case tasks = "Tasks"
+    case progress = "Progress"
+    
+    // Creator
     case creator = "Creator"
 }
 
@@ -34,6 +38,9 @@ struct HomeView: View {
             }
 
             TabView(selection: $selectedTab) {
+                JourneyView()
+                    .tag(Tab.progress)
+                
                 MissionsView(selectedStoryId: selectedStoryId)
                     .tag(Tab.tasks)
 
@@ -51,6 +58,8 @@ struct HomeView: View {
             }
             .onChange(of: selectedTab) {
                 switch selectedTab {
+                case .progress:
+                    selectedTabType = .user
                 case .tasks:
                     selectedTabType = .user
                 case .creator:
@@ -73,14 +82,16 @@ struct TopTabView: View {
         TabView(selection: $selectedTabType) {
             HStack {
                 Spacer()
-                adventureTabButtons
+                tabButton(title: Tab.progress.rawValue, image: "map.fill", tab: .progress)
+                Spacer()
+                tabButton(title: Tab.tasks.rawValue, image: "transmission", tab: .tasks)
                 Spacer()
             }
             .tag(TabType.user)
 
             HStack {
                 Spacer()
-                creatorTabButton
+                tabButton(title: Tab.creator.rawValue, image: "theatermasks.fill", tab: .creator)
                 Spacer()
             }
             .tag(TabType.creator)
@@ -89,14 +100,6 @@ struct TopTabView: View {
         .frame(height: 80)
         .padding([.leading, .trailing])
         .background(Color(.tabBarBackground))
-    }
-
-    private var adventureTabButtons: some View {
-        tabButton(title: Tab.tasks.rawValue, image: "transmission", tab: .tasks)
-    }
-
-    private var creatorTabButton: some View {
-        tabButton(title: Tab.creator.rawValue, image: "theatermasks.fill", tab: .creator)
     }
 
     private func tabButton(title: String, image: String, tab: Tab) -> some View {

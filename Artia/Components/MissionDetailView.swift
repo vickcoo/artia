@@ -42,11 +42,13 @@ struct MissionDetailView: View {
                     }
 
                     ConditionView(mission: mission, onConditionUpdate: {
-                        mission.updateCompleted()
                         tempWalkaroundIsCompleted = mission.isCompleted
                     })
 
                     Spacer()
+                    
+                    Text("\(tempWalkaroundIsCompleted)")
+                        .hidden()
                 }
                 .padding()
             }
@@ -64,7 +66,6 @@ struct MissionDetailView: View {
         }
         .background(Color(.primaryBackground))
         .onAppear {
-            mission.updateCompleted()
             tempWalkaroundIsCompleted = mission.isCompleted
         }
     }
