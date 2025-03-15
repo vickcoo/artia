@@ -43,6 +43,7 @@ struct OverviewProgressView: View {
 
     var storyProgress: Double {
         let mainMissions = missions.filter { $0.type == .main }
+        guard mainMissions.count > 0 else { return 0 }
 
         var finishedMissionCount = 0
         for mission in mainMissions {
@@ -405,6 +406,7 @@ struct StoryProgressCard: View {
     }
 
     var progressPercentage: Double {
+        guard currentStoryMissions.count > 0 else { return 0 }
         var completedMissions = 0
         for mission in currentStoryMissions {
             if mission.isCompleted {
@@ -413,6 +415,13 @@ struct StoryProgressCard: View {
         }
 
         return Double(completedMissions) / Double(currentStoryMissions.count)
+    }
+    
+    var formatProgress: String {
+        let formatter = NumberFormatter()
+        formatter.numberStyle = .percent
+        formatter.maximumFractionDigits = 0
+        return formatter.string(from: NSNumber(value: progressPercentage)) ?? "0%"
     }
 
     var body: some View {
@@ -447,7 +456,7 @@ struct StoryProgressCard: View {
 
                     Spacer()
 
-                    Text("\(Int(progressPercentage * 100))%")
+                    Text("\(formatProgress)")
                         .font(.caption)
                         .foregroundColor(.secondary)
                 }
