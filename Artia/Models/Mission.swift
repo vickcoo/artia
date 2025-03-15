@@ -8,7 +8,7 @@ class Mission: Identifiable, ObservableObject {
     let status: MissionStatus
     let type: MissionType
     let storyId: UUID?
-    var conditions: [any MissionCondition]
+    @Published var conditions: [any MissionCondition]
     let rewards: [MissionReward]
 
     @Published var isCompleted: Bool = false

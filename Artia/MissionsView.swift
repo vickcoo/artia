@@ -18,8 +18,38 @@ struct MissionsView: View {
 
             ScrollView {
                 LazyVStack(spacing: 16) {
-                    ForEach(store.missions) { mission in
-                        MissionCard(mission: mission)
+                    let mainMissions = store.missions.filter { $0.type == .main }
+                    let sideMissions = store.missions.filter { $0.type == .side }
+                    let repeatMissions = store.missions.filter { $0.type == .repeat }
+                    if mainMissions.isEmpty == false {
+                        Text(mainMissions.first?.type.text ?? "")
+                            .font(.title3)
+                            .fontWeight(.bold)
+                            .foregroundStyle(.primary)
+                        ForEach(mainMissions) { mission in
+                            MissionCard(mission: mission)
+                                .foregroundStyle(.primary)
+                        }
+                    }
+                    if sideMissions.isEmpty == false {
+                        Text(sideMissions.first?.type.text ?? "")
+                            .font(.title3)
+                            .fontWeight(.bold)
+                            .foregroundStyle(.primary)
+                        ForEach(sideMissions) { mission in
+                            MissionCard(mission: mission)
+                                .foregroundStyle(.primary)
+                        }
+                    }
+                    if repeatMissions.isEmpty == false {
+                        Text(repeatMissions.first?.type.text ?? "")
+                            .font(.title3)
+                            .fontWeight(.bold)
+                            .foregroundStyle(.primary)
+                        ForEach(repeatMissions) { mission in
+                            MissionCard(mission: mission)
+                                .foregroundStyle(.primary)
+                        }
                     }
                 }
                 .padding()
@@ -30,7 +60,7 @@ struct MissionsView: View {
 }
 
 struct MissionCard: View {
-    @State var mission: Mission
+    @ObservedObject var mission: Mission
     @State private var showingDetail = false
 
     var body: some View {
@@ -52,7 +82,7 @@ struct MissionCard: View {
             showingDetail = true
         }
         .sheet(isPresented: $showingDetail) {
-            MissionDetailView(mission: $mission)
+            MissionDetailView(mission: mission)
         }
     }
 }

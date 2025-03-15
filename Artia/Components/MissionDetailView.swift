@@ -2,7 +2,7 @@ import SwiftUI
 
 struct MissionDetailView: View {
     @EnvironmentObject private var store: MissionStore
-    @Binding var mission: Mission
+    @ObservedObject var mission: Mission
 
     // FIXME: This is a temporary workaround to update the UI when the mission is completed.
     @State private var tempWalkaroundIsCompleted: Bool = false
@@ -41,7 +41,7 @@ struct MissionDetailView: View {
                         Divider()
                     }
 
-                    ConditionView(mission: $mission, onConditionUpdate: {
+                    ConditionView(mission: mission, onConditionUpdate: {
                         mission.updateCompleted()
                         tempWalkaroundIsCompleted = mission.isCompleted
                     })
@@ -90,7 +90,7 @@ private struct RewardView: View {
 }
 
 private struct ConditionView: View {
-    @Binding var mission: Mission
+    @ObservedObject var mission: Mission
     var onConditionUpdate: () -> Void
 
     var body: some View {
@@ -170,5 +170,5 @@ private struct HealthKitConditionView: View {
 }
 
 #Preview {
-    MissionDetailView(mission: .constant(MockData.task))
+    MissionDetailView(mission: MockData.task)
 }
