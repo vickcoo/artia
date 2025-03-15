@@ -1,6 +1,7 @@
 import SwiftUI
 
 struct MissionDetailView: View {
+    @EnvironmentObject private var store: MissionStore
     @Binding var mission: Mission
 
     // FIXME: This is a temporary workaround to update the UI when the mission is completed.
@@ -24,10 +25,10 @@ struct MissionDetailView: View {
                     Text(mission.description.isEmpty ? "-" : mission.description)
                         .foregroundColor(.secondary)
 
-                    if let line = mission.story {
+                    if let storyId = mission.storyId, let story = store.getStory(by: storyId) {
                         HStack {
                             Image(systemName: "person.fill.turn.right")
-                            Text(line.title)
+                            Text(story.title)
                                 .font(.subheadline)
                                 .fontWeight(.medium)
                         }

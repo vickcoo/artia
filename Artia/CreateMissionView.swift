@@ -118,7 +118,7 @@ struct CreateMissionView: View {
             description: description,
             status: .todo,
             type: selectedMissionType,
-            story: selectedStory,
+            storyId: selectedStory?.id,
             conditions: conditions,
             rewards: rewards
         )

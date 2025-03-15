@@ -2,23 +2,24 @@ import Foundation
 import SwiftUI
 
 class Mission: Identifiable, ObservableObject {
-    let id: UUID = .init()
+    let id: UUID
     let title: String
     let description: String
     let status: MissionStatus
     let type: MissionType
-    let story: Story?
+    let storyId: UUID?
     var conditions: [any MissionCondition]
     let rewards: [MissionReward]
 
     @Published var isCompleted: Bool = false
 
-    init(title: String, description: String, status: MissionStatus, type: MissionType, story: Story?, conditions: [any MissionCondition], rewards: [MissionReward]) {
+    init(id: UUID = UUID(), title: String, description: String, status: MissionStatus, type: MissionType, storyId: UUID?, conditions: [any MissionCondition], rewards: [MissionReward]) {
+        self.id = id
         self.title = title
         self.description = description
         self.status = status
         self.type = type
-        self.story = story
+        self.storyId = storyId
         self.conditions = conditions
         self.rewards = rewards
     }
@@ -71,11 +72,4 @@ struct MissionReward: Identifiable, Equatable {
     let id: UUID = .init()
     let title: String
     let description: String
-}
-
-struct Story: Identifiable, Equatable {
-    let id: UUID = .init()
-    var title: String
-    var content: String
-    var missions: [Mission]
 }

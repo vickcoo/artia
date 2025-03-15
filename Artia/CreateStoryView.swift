@@ -8,13 +8,13 @@
 import SwiftUI
 
 struct CreateStoryView: View {
-    @EnvironmentObject var missionStore: MissionStore
+    @EnvironmentObject var store: MissionStore
     @Environment(\.dismiss) private var dismiss
 
     @State private var title = ""
     @State private var description = ""
-    @State private var missions: [Mission] = []
     @State private var showingAddMission = false
+    @State private var missions: [Mission] = []
 
     var body: some View {
         NavigationStack {
@@ -60,7 +60,7 @@ struct CreateStoryView: View {
                 }
             }
             .sheet(isPresented: $showingAddMission) {
-                CreateMissionView(showingAddMission: $showingAddMission, missions: $missions)
+                StoryCreateMissionView(showingAddMission: $showingAddMission, missions: $missions)
                     .presentationDetents([.medium])
                     .interactiveDismissDisabled()
             }
@@ -68,17 +68,28 @@ struct CreateStoryView: View {
     }
 
     private func deleteMission(at offsets: IndexSet) {
-        missions.remove(atOffsets: offsets)
     }
 
     private func saveStory() {
         let story = Story(
             title: title,
-            content: description,
-            missions: missions
+            content: description
         )
 
-        missionStore.addStory(story)
+        store.addStory(story)
+        
+        for mission in missions {
+            let newMission = Mission(
+                title: mission.title,
+                description: mission.description,
+                status: mission.status,
+                type: mission.type,
+                storyId: story.id,
+                conditions: mission.conditions,
+                rewards: mission.rewards
+            )
+            store.createMission(newMission)
+        }
 
         dismiss()
     }
@@ -115,7 +126,7 @@ private struct MissionList: View {
     }
 }
 
-private struct CreateMissionView: View {
+private struct StoryCreateMissionView: View {
     @State private var newMissionTitle = ""
     @State private var newMissionDescription = ""
     @State private var selectedMissionType: MissionType = .main
@@ -174,7 +185,7 @@ private struct CreateMissionView: View {
             description: newMissionDescription,
             status: .todo,
             type: selectedMissionType,
-            story: nil,
+            storyId: nil,
             conditions: [],
             rewards: []
         )
@@ -192,5 +203,5 @@ private struct CreateMissionView: View {
 }
 
 #Preview {
-    CreateMissionView(showingAddMission: .constant(true), missions: .constant([]))
+    StoryCreateMissionView(showingAddMission: .constant(true), missions: .constant([]))
 }

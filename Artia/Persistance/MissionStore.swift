@@ -8,7 +8,7 @@
 import Foundation
 
 class MissionStore: ObservableObject {
-    @Published var stories: [Story] = []
+    @Published var stories: [Story] = MockData.stories
     @Published var missions: [Mission] = MockData.tasks
     @Published var selectedMission: Mission?
 
@@ -24,8 +24,8 @@ class MissionStore: ObservableObject {
             selectedMission = nil
         }
     }
-    
-    func deleteMission(_ index: IndexSet) async throws {
+
+    func deleteMission(_: IndexSet) async throws {
         // missions.remove(at: index)
     }
 
@@ -37,12 +37,18 @@ class MissionStore: ObservableObject {
             }
         }
     }
+}
 
+extension MissionStore {
     func addStory(_ story: Story) {
         stories.append(story)
     }
 
     func deleteStory(_ story: Story) {
         stories.removeAll { $0.id == story.id }
+    }
+
+    func getStory(by id: UUID) -> Story? {
+        stories.first { $0.id == id }
     }
 }

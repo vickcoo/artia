@@ -8,18 +8,42 @@
 import Foundation
 
 enum MockData {
+    static let story: Story = .init(
+        id: UUID(uuidString: "00000000-0000-0000-0000-000000000000")!,
+        title: "Main Quest",
+        content: "The fate of the kingdom rests in your hands"
+    )
+    static let stories: [Story] = [
+        Story(
+            title: "Main Quest",
+            content: "The fate of the kingdom rests in your hands"
+        ),
+        Story(
+            title: "Side Quest",
+            content: "The Wizard needs these for research"
+        ),
+        Story(
+            title: "Daily Quest",
+            content: "Practice makes perfect"
+        ),
+        Story(
+            title: "Main Quest",
+            content: "Dark forces are at work"
+        ),
+        Story(
+            title: "Equipment Quest",
+            content: "Upgrade your gear"
+        ),
+    ]
+
     static let task: Mission = .init(
         title: "Defeat the Dragon King",
         description: "Venture into the Dragon's Lair and defeat the legendary Dragon King. Required level: 50+",
         status: .todo,
         type: .main,
-        story: Story(
-            title: "Main Quest",
-            content: "The fate of the kingdom rests in your hands",
-            missions: []
-        ),
+        storyId: UUID(uuidString: "00000000-0000-0000-0000-000000000000")!,
         conditions: [
-            ImageCondition(title: "Capture Battle Scene", goal: 1, value: [])
+            ImageCondition(title: "Capture Battle Scene", goal: 1, value: []),
         ],
         rewards: [
             MissionReward(title: "A Sword", description: "Drop by Dragon King"),
@@ -32,13 +56,9 @@ enum MockData {
             description: "Venture into the Dragon's Lair and defeat the legendary Dragon King. Required level: 50+",
             status: .todo,
             type: .main,
-            story: Story(
-                title: "Main Quest",
-                content: "The fate of the kingdom rests in your hands",
-                missions: []
-            ),
+            storyId: nil,
             conditions: [
-                ImageCondition(title: "Capture Battle Scene", goal: 3, value: [])
+                ImageCondition(title: "Capture Battle Scene", goal: 3, value: []),
             ],
             rewards: [
                 MissionReward(title: "A Sword", description: "Drop by Dragon King"),
@@ -49,13 +69,9 @@ enum MockData {
             description: "Search the Crystal Cave for rare magic crystals needed for the ancient ritual",
             status: .todo,
             type: .side,
-            story: Story(
-                title: "Side Quest",
-                content: "The Wizard needs these for research",
-                missions: []
-            ),
+            storyId: nil,
             conditions: [
-                ImageCondition(title: "Crystal Collection Photos", goal: 5, value: [])
+                ImageCondition(title: "Crystal Collection Photos", goal: 5, value: []),
             ],
             rewards: []
         ),
@@ -64,13 +80,9 @@ enum MockData {
             description: "Complete your daily combat training to maintain your skills",
             status: .todo,
             type: .repeat,
-            story: Story(
-                title: "Daily Quest",
-                content: "Practice makes perfect",
-                missions: []
-            ),
+            storyId: nil,
             conditions: [
-                HealthKitCondition(healthType: .calories, title: "Workout Tracking", value: 0, goal: 300)
+                HealthKitCondition(healthType: .calories, title: "Workout Tracking", value: 0, goal: 300),
             ],
             rewards: []
         ),
@@ -79,14 +91,10 @@ enum MockData {
             description: "Investigate the mysterious disappearances in Shadowvale and protect the villagers",
             status: .todo,
             type: .main,
-            story: Story(
-                title: "Main Quest",
-                content: "Dark forces are at work",
-                missions: []
-            ),
+            storyId: nil,
             conditions: [
                 ImageCondition(title: "Evidence Photos", goal: 5, value: []),
-                HealthKitCondition(healthType: .calories, title: "Physical Condition Monitor", value: 0, goal: 500)
+                HealthKitCondition(healthType: .calories, title: "Physical Condition Monitor", value: 0, goal: 500),
             ],
             rewards: []
         ),
@@ -95,13 +103,9 @@ enum MockData {
             description: "Visit the blacksmith to enhance your weapon with magical properties",
             status: .todo,
             type: .side,
-            story: Story(
-                title: "Equipment Quest",
-                content: "Upgrade your gear",
-                missions: []
-            ),
+            storyId: nil,
             conditions: [
-                ImageCondition(title: "Weapon Upgrade Proof", goal: 1, value: [])
+                ImageCondition(title: "Weapon Upgrade Proof", goal: 1, value: []),
             ],
             rewards: []
         ),
