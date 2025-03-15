@@ -13,9 +13,7 @@ class MissionStore: ObservableObject {
     @Published var selectedMission: Mission?
 
     func createMission(_ mission: Mission) {
-        DispatchQueue.main.async {
-            self.missions.append(mission)
-        }
+        self.missions.append(mission)
     }
 
     func deleteMission(_ mission: Mission) async throws {
