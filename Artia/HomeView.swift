@@ -20,11 +20,9 @@ struct HomeView: View {
 
     @State var selectedTabType: TabType = .user
     @State var selectedTab: Tab = .missions
-    @State var selectedStoryId: UUID? = nil
-
-    private var storyChipOptions: [ChipOption] {
-        store.stories.map { ChipOption(id: $0.id, title: $0.title) }
-    }
+    
+    @State private var showingDetail = false
+    @State private var selectedMissionId: UUID?
 
     var body: some View {
         VStack {
@@ -33,15 +31,11 @@ struct HomeView: View {
                 selectedTab: $selectedTab
             )
 
-            if selectedTab == .missions {
-                ChipView(selectedOptionId: $selectedStoryId, options: storyChipOptions)
-            }
-
             TabView(selection: $selectedTab) {
                 JourneyView()
                     .tag(Tab.journey)
 
-                MissionsView(selectedStoryId: selectedStoryId)
+                MissionsView(showingDetail: $showingDetail, selectedMissionId: $selectedMissionId)
                     .tag(Tab.missions)
 
                 CreatorView()
@@ -74,6 +68,12 @@ struct HomeView: View {
                 .ignoresSafeArea()
         )
         .ignoresSafeArea(.all, edges: .bottom)
+        .onChange(of: showingDetail) { /* Don't remove this, this can keep showing mission detail work. */ }
+        .sheet(isPresented: $showingDetail) {
+            if let mission = store.getMission(by: selectedMissionId) {
+                MissionDetailView(mission: mission)
+            }
+        }
     }
 }
 

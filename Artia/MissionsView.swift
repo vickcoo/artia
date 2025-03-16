@@ -9,7 +9,9 @@ import SwiftUI
 
 struct MissionsView: View {
     @EnvironmentObject private var store: MissionStore
-    var selectedStoryId: UUID?
+    @State var selectedStoryId: UUID?
+    @Binding var showingDetail: Bool
+    @Binding var selectedMissionId: UUID?
 
     var filteredMissions: [Mission] {
         if let selectedStoryId = selectedStoryId {
@@ -19,10 +21,13 @@ struct MissionsView: View {
         }
     }
 
+    private var storyChipOptions: [ChipOption] {
+        store.stories.map { ChipOption(id: $0.id, title: $0.title) }
+    }
+
     var body: some View {
         VStack {
-            // MissionTypeStats(missions: filteredMissions)
-            // Divider()
+            ChipView(selectedOptionId: $selectedStoryId, options: storyChipOptions)
 
             ScrollView {
                 LazyVStack(spacing: 16) {
@@ -31,40 +36,23 @@ struct MissionsView: View {
                     let repeatMissions = filteredMissions.filter { $0.type == .repeat }
 
                     if mainMissions.isEmpty == false {
-                        Text(mainMissions.first?.type.text ?? "")
-                            .font(.title3)
-                            .fontWeight(.bold)
-                            .foregroundStyle(.primary)
-                        ForEach(mainMissions.indices) { index in
-                            let mission = mainMissions[index]
-                            if let idx = mainMissions.firstIndex(of: mission) {
-                                MissionCard(mission: store.missions[idx])
-                                    .foregroundStyle(.primary)
-                            } else {
-                                Text("No Mission")
-                            }
+                        MissionList(title: mainMissions.first?.type.text ?? "-", missions: mainMissions) { mission in
+                            showingDetail = true
+                            selectedMissionId = mission.id
                         }
                     }
 
                     if sideMissions.isEmpty == false {
-                        Text(sideMissions.first?.type.text ?? "")
-                            .font(.title3)
-                            .fontWeight(.bold)
-                            .foregroundStyle(.primary)
-                        ForEach(sideMissions) { mission in
-                            MissionCard(mission: mission)
-                                .foregroundStyle(.primary)
+                        MissionList(title: sideMissions.first?.type.text ?? "-", missions: sideMissions) { mission in
+                            showingDetail = true
+                            selectedMissionId = mission.id
                         }
                     }
 
                     if repeatMissions.isEmpty == false {
-                        Text(repeatMissions.first?.type.text ?? "")
-                            .font(.title3)
-                            .fontWeight(.bold)
-                            .foregroundStyle(.primary)
-                        ForEach(repeatMissions) { mission in
-                            MissionCard(mission: mission)
-                                .foregroundStyle(.primary)
+                        MissionList(title: repeatMissions.first?.type.text ?? "-", missions: repeatMissions) { mission in
+                            showingDetail = true
+                            selectedMissionId = mission.id
                         }
                     }
 
@@ -75,11 +63,11 @@ struct MissionsView: View {
                                 .foregroundColor(.gray)
 
                             if selectedStoryId != nil {
-                                Text("此故事尚無任務")
+                                Text("No Mission for this Story")
                                     .font(.headline)
                                     .foregroundColor(.gray)
                             } else {
-                                Text("尚無任務")
+                                Text("No Mission")
                                     .font(.headline)
                                     .foregroundColor(.gray)
                             }
@@ -94,10 +82,33 @@ struct MissionsView: View {
     }
 }
 
+private struct MissionList: View {
+    @EnvironmentObject private var store: MissionStore
+    let title: String
+    let missions: [Mission]
+    let tapAction: (Mission) -> Void
+
+    var body: some View {
+        VStack {
+            Text(title)
+                .font(.title3)
+                .fontWeight(.bold)
+                .foregroundStyle(.primary)
+
+            ForEach(missions.indices, id: \.self) { index in
+                let mission = missions[index]
+                MissionCard(mission: mission)
+                    .foregroundStyle(.primary)
+                    .onTapGesture {
+                        tapAction(mission)
+                    }
+            }
+        }
+    }
+}
+
 struct MissionCard: View {
     @ObservedObject var mission: Mission
-    @State private var showingDetail = false
-    @EnvironmentObject private var store: MissionStore
 
     var body: some View {
         VStack(alignment: .leading, spacing: 8) {
@@ -117,16 +128,10 @@ struct MissionCard: View {
                 .stroke(Color.cardBorder, lineWidth: 1)
                 .background(Color.secondaryBackground.cornerRadius(12))
         )
-        .onTapGesture {
-            showingDetail = true
-        }
-        .sheet(isPresented: $showingDetail) {
-            MissionDetailView(mission: mission)
-        }
     }
 }
 
 #Preview {
-    MissionsView()
+    MissionsView(showingDetail: .constant(false), selectedMissionId: .constant(nil))
         .environmentObject(MissionStore())
 }
