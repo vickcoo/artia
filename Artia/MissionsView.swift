@@ -15,9 +15,9 @@ struct MissionsView: View {
 
     var missionsFilterByStory: [Mission] {
         if let selectedStoryId = selectedStoryId {
-            return store.missions.filter { $0.storyId == selectedStoryId }
+            return store.stories.first { $0.id == selectedStoryId }?.missions ?? []
         } else {
-            return store.missions
+            return store.stories.flatMap({ $0.missions })
         }
     }
 

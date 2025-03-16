@@ -7,17 +7,15 @@ final class Mission: Identifiable, ObservableObject {
     let description: String
     @Published var status: MissionStatus
     let type: MissionType
-    let storyId: UUID?
     @Published var conditions: [any MissionCondition]
     let rewards: [MissionReward]
 
-    init(id: UUID = UUID(), title: String, description: String, status: MissionStatus, type: MissionType, storyId: UUID?, conditions: [any MissionCondition], rewards: [MissionReward]) {
+    init(id: UUID = UUID(), title: String, description: String, status: MissionStatus, type: MissionType, conditions: [any MissionCondition], rewards: [MissionReward]) {
         self.id = id
         self.title = title
         self.description = description
         self.status = status
         self.type = type
-        self.storyId = storyId
         self.conditions = conditions
         self.rewards = rewards
     }

@@ -13,25 +13,25 @@ struct JourneyView: View {
     @State private var selectedStoryFilter: UUID? = nil
 
     var completionRate: Double {
-        let totalMissions = store.missions.count
+        let totalMissions = store.getAllMission().count
         if totalMissions == 0 { return 0 }
 
-        let completedMissions = store.missions.filter { $0.canCompleted }.count
+        let completedMissions = store.getAllMission().filter { $0.isCompleted }.count
         return Double(completedMissions) / Double(totalMissions)
     }
 
     var body: some View {
         ScrollView {
             VStack(spacing: 24) {
-                OverviewProgressView(missions: store.missions)
+                OverviewProgressView(missions: store.getAllMission())
 
-                OverviewSection(missions: store.missions)
+                OverviewSection(missions: store.getAllMission())
 
-                GoalSection(missions: store.missions)
+                GoalSection(missions: store.getAllMission())
 
                 StoryProgressSection(stories: store.stories)
 
-                AchievementSection(missions: store.missions)
+                AchievementSection(missions: store.getAllMission())
             }
             .padding(.horizontal)
         }
@@ -43,7 +43,7 @@ struct OverviewProgressView: View {
 
     var storyProgress: Double {
         let mainMissions = missions.filter { $0.type == .main }
-        guard mainMissions.count > 0 else { return 0 }
+        guard !mainMissions.isEmpty else { return 0 }
 
         var finishedMissionCount = 0
         for mission in mainMissions {
@@ -402,11 +402,11 @@ struct StoryProgressCard: View {
     @EnvironmentObject private var store: MissionStore
 
     var currentStoryMissions: [Mission] {
-        store.missions.filter { $0.storyId == story.id }
+        story.missions
     }
 
     var progressPercentage: Double {
-        guard currentStoryMissions.count > 0 else { return 0 }
+        guard !currentStoryMissions.isEmpty else { return 0 }
         var completedMissions = 0
         for mission in currentStoryMissions {
             if mission.canCompleted {
@@ -416,7 +416,7 @@ struct StoryProgressCard: View {
 
         return Double(completedMissions) / Double(currentStoryMissions.count)
     }
-    
+
     var formatProgress: String {
         let formatter = NumberFormatter()
         formatter.numberStyle = .percent

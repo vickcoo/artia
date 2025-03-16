@@ -12,9 +12,12 @@ struct Story: Identifiable, Equatable {
     var title: String
     var content: String
 
-    init(id: UUID = UUID(), title: String, content: String) {
+    var missions: [Mission] = []
+
+    init(id: UUID = UUID(), title: String, content: String, missions: [Mission]) {
         self.id = id
         self.title = title
         self.content = content
+        self.missions = missions
     }
 }

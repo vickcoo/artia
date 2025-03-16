@@ -9,35 +9,20 @@ import Foundation
 
 class MissionStore: ObservableObject {
     @Published var stories: [Story] = MockData.stories
-    @Published var missions: [Mission] = MockData.tasks
     @Published var selectedMission: Mission?
 
-    func createMission(_ mission: Mission) {
-        self.missions.append(mission)
-    }
-
-    func deleteMission(_ mission: Mission) async throws {
-        missions.removeAll { $0.id == mission.id }
-        if selectedMission?.id == mission.id {
-            selectedMission = nil
+    func addMission(mission: Mission, to storyId: UUID) {
+        if let index = stories.firstIndex(where: { $0.id == storyId }) {
+            stories[index].missions.append(mission)
         }
     }
 
-    func deleteMission(_: IndexSet) async throws {
-        // missions.remove(at: index)
+    func getAllMission() -> [Mission] {
+        stories.flatMap { $0.missions }
     }
 
-    func updateMission(_ mission: Mission) async throws {
-        if let index = missions.firstIndex(where: { $0.id == mission.id }) {
-            missions[index] = mission
-            if selectedMission?.id == mission.id {
-                selectedMission = mission
-            }
-        }
-    }
-    
     func getMission(by id: UUID?) -> Mission? {
-        missions.first { $0.id == id }
+        stories.flatMap { $0.missions }.first { $0.id == id }
     }
 }
 
@@ -52,5 +37,9 @@ extension MissionStore {
 
     func getStory(by id: UUID?) -> Story? {
         stories.first { $0.id == id }
+    }
+
+    func getStory(by mission: Mission) -> Story? {
+        stories.first(where: { $0.missions.contains(mission) })
     }
 }

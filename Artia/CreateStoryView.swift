@@ -73,24 +73,11 @@ struct CreateStoryView: View {
     private func saveStory() {
         let story = Story(
             title: title,
-            content: description
+            content: description,
+            missions: missions
         )
 
         store.addStory(story)
-
-        for mission in missions {
-            let newMission = Mission(
-                title: mission.title,
-                description: mission.description,
-                status: mission.status,
-                type: mission.type,
-                storyId: story.id,
-                conditions: mission.conditions,
-                rewards: mission.rewards
-            )
-            store.createMission(newMission)
-        }
-
         dismiss()
     }
 }
@@ -185,7 +172,6 @@ private struct StoryCreateMissionView: View {
             description: newMissionDescription,
             status: .todo,
             type: selectedMissionType,
-            storyId: nil,
             conditions: [],
             rewards: []
         )

@@ -118,14 +118,15 @@ struct CreateMissionView: View {
             description: description,
             status: .todo,
             type: selectedMissionType,
-            storyId: selectedStory?.id,
             conditions: conditions,
             rewards: rewards
         )
 
         Task {
-            missionStore.createMission(newMission)
-            dismiss()
+            if let storyId = selectedStory?.id {
+                missionStore.addMission(mission: newMission, to: storyId)
+                dismiss()
+            }
         }
     }
 }

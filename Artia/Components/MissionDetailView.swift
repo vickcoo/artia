@@ -26,7 +26,7 @@ struct MissionDetailView: View {
                     Text(mission.description.isEmpty ? "-" : mission.description)
                         .foregroundColor(.secondary)
 
-                    if let storyId = mission.storyId, let story = store.getStory(by: storyId) {
+                    if let story = store.getStory(by: mission) {
                         HStack {
                             Image(systemName: "person.fill.turn.right")
                             Text(story.title)
@@ -167,6 +167,6 @@ private struct HealthKitConditionView: View {
 }
 
 #Preview {
-    MissionDetailView(mission: MockData.task)
+    MissionDetailView(mission: MockData.mission)
         .environmentObject(MissionStore())
 }

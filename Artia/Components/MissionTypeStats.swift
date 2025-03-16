@@ -50,6 +50,6 @@ private struct StatBox: View {
 }
 
 #Preview {
-    MissionTypeStats(missions: MockData.tasks)
+    MissionTypeStats(missions: MockData.missions)
         .padding()
 }
