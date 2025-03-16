@@ -2,6 +2,7 @@ import SwiftUI
 
 struct MissionDetailView: View {
     @EnvironmentObject private var store: MissionStore
+    @Environment(\.dismiss) private var dismiss
     @ObservedObject var mission: Mission
 
     // FIXME: This is a temporary workaround to update the UI when the mission is completed.
@@ -42,33 +43,26 @@ struct MissionDetailView: View {
                     }
 
                     ConditionView(mission: mission, onConditionUpdate: {
-                        tempWalkaroundIsCompleted = mission.isCompleted
+                        tempWalkaroundIsCompleted = mission.canCompleted
                     })
 
                     Spacer()
-                    
+
                     Text("\(tempWalkaroundIsCompleted)")
                         .hidden()
                 }
                 .padding()
             }
 
-            Button {
-            } label: {
-                Text("Finish")
-                    .bold()
-                    .frame(maxWidth: .infinity)
-                    .frame(height: 60)
-                    .foregroundStyle(!mission.isCompleted ? .buttonDisableForeground : .buttonForeground)
-                    .background(!mission.isCompleted ? Color(.buttonDisableBackground) : Color(.buttonBackground))
-                    .cornerRadius(16)
+            RichButton(title: "Finish", color: .black, icon: "sparkle", disabled: mission.canNotCompleted) {
+                mission.finish()
+                dismiss()
             }
-            .disabled(!mission.isCompleted)
             .padding()
         }
         .background(Color(.primaryBackground))
         .onAppear {
-            tempWalkaroundIsCompleted = mission.isCompleted
+            tempWalkaroundIsCompleted = mission.canCompleted
         }
     }
 }

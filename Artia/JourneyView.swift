@@ -16,7 +16,7 @@ struct JourneyView: View {
         let totalMissions = store.missions.count
         if totalMissions == 0 { return 0 }
 
-        let completedMissions = store.missions.filter { $0.isCompleted }.count
+        let completedMissions = store.missions.filter { $0.canCompleted }.count
         return Double(completedMissions) / Double(totalMissions)
     }
 
@@ -47,7 +47,7 @@ struct OverviewProgressView: View {
 
         var finishedMissionCount = 0
         for mission in mainMissions {
-            if mission.isCompleted {
+            if mission.canCompleted {
                 finishedMissionCount += 1
             }
         }
@@ -130,7 +130,7 @@ struct OverviewSection: View {
                 StatCard(
                     icon: "repeat",
                     iconColor: .green,
-                    value: "\(missions.filter { $0.isCompleted }.count)",
+                    value: "\(missions.filter { $0.canCompleted }.count)",
                     label: "Finished Mission"
                 )
 
@@ -232,7 +232,7 @@ struct GoalSection: View {
             if missions.isEmpty {
                 EmptyGoalView()
             } else {
-                if let mainMission = missions.first(where: { $0.type == .main && !$0.isCompleted }) {
+                if let mainMission = missions.first(where: { $0.type == .main && !$0.canCompleted }) {
                     GoalCard(mission: mainMission)
                 } else {
                     EmptyGoalView()
@@ -348,22 +348,22 @@ struct AchievementSection: View {
                     Spacer()
                     AchievementIcon(
                         icon: "timer",
-                        isUnlocked: !missions.filter { $0.isCompleted }.isEmpty
+                        isUnlocked: !missions.filter { $0.canCompleted }.isEmpty
                     )
 
                     AchievementIcon(
                         icon: "checkmark",
-                        isUnlocked: missions.filter { $0.isCompleted }.count >= 3
+                        isUnlocked: missions.filter { $0.canCompleted }.count >= 3
                     )
 
                     AchievementIcon(
                         icon: "repeat",
-                        isUnlocked: !missions.filter { $0.type == .repeat && $0.isCompleted }.isEmpty
+                        isUnlocked: !missions.filter { $0.type == .repeat && $0.canCompleted }.isEmpty
                     )
 
                     AchievementIcon(
                         icon: "crown.fill",
-                        isUnlocked: missions.filter { $0.type == .main && $0.isCompleted }.count >= 1
+                        isUnlocked: missions.filter { $0.type == .main && $0.canCompleted }.count >= 1
                     )
                     Spacer()
                 }
@@ -409,7 +409,7 @@ struct StoryProgressCard: View {
         guard currentStoryMissions.count > 0 else { return 0 }
         var completedMissions = 0
         for mission in currentStoryMissions {
-            if mission.isCompleted {
+            if mission.canCompleted {
                 completedMissions += 1
             }
         }
@@ -450,7 +450,7 @@ struct StoryProgressCard: View {
                 .frame(height: 8)
 
                 HStack {
-                    Text("\(currentStoryMissions.filter { $0.isCompleted }.count)/\(currentStoryMissions.count) Mission Finished")
+                    Text("\(currentStoryMissions.filter { $0.canCompleted }.count)/\(currentStoryMissions.count) Mission Finished")
                         .font(.caption)
                         .foregroundColor(.secondary)
 

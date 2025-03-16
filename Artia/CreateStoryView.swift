@@ -18,57 +18,52 @@ struct CreateStoryView: View {
 
     var body: some View {
         NavigationStack {
-            Form {
-                Section(header: Text("Info")) {
-                    TextField("Title", text: $title)
-                    TextField("Description", text: $description, axis: .vertical)
-                        .lineLimit(4 ... 6)
+            VStack {
+                Form {
+                    Section(header: Text("Info")) {
+                        TextField("Title", text: $title)
+                        TextField("Description", text: $description, axis: .vertical)
+                            .lineLimit(4 ... 6)
+                    }
+                    .listRowBackground(Color(.section))
+
+                    Section("Missions (Optional)") {
+                        MissionList(missions: $missions, deleteMission: deleteMission)
+
+                        Button(action: {
+                            showingAddMission = true
+                        }) {
+                            Label("Add Mission", systemImage: "plus.circle")
+                                .foregroundStyle(.black)
+                        }
+                    }
+                    .listRowBackground(Color(.section))
                 }
-                .listRowBackground(Color(.section))
-
-                Section("Missions (Optional)") {
-                    MissionList(missions: $missions, deleteMission: deleteMission)
-
-                    Button(action: {
-                        showingAddMission = true
-                    }) {
-                        Label("Add Mission", systemImage: "plus.circle")
-                            .foregroundStyle(.black)
+                .scrollContentBackground(.hidden)
+                .background(Color(.primaryBackground))
+                .navigationTitle("Create a story")
+                .navigationBarTitleDisplayMode(.inline)
+                .toolbar {
+                    ToolbarItem(placement: .topBarLeading) {
+                        Button("Cancel") {
+                            dismiss()
+                        }
+                        .tint(.black)
                     }
                 }
-                .listRowBackground(Color(.section))
+                .sheet(isPresented: $showingAddMission) {
+                    StoryCreateMissionView(showingAddMission: $showingAddMission, missions: $missions)
+                        .presentationDetents([.medium])
+                        .interactiveDismissDisabled()
+                }
 
-                Section {
-                    Button {
-                        saveStory()
-                    } label: {
-                        Text("Add")
-                            .bold()
-                            .frame(maxWidth: .infinity)
-                            .frame(height: 60)
-                            .foregroundStyle(title.isEmpty ? .buttonDisableForeground : .buttonForeground)
-                            .background(title.isEmpty ? Color(.buttonDisableBackground) : Color(.buttonBackground))
-                            .cornerRadius(16)
-                    }
-                    .disabled(title.isEmpty)
+                Spacer()
+
+                RichButton(title: "Add", color: Color.buttonBackground, icon: "sparkle", disabled: title.isEmpty) {
+                    saveStory()
                 }
-            }
-            .scrollContentBackground(.hidden)
-            .background(Color(.primaryBackground))
-            .navigationTitle("Create a story")
-            .navigationBarTitleDisplayMode(.inline)
-            .toolbar {
-                ToolbarItem(placement: .topBarLeading) {
-                    Button("Cancel") {
-                        dismiss()
-                    }
-                    .tint(.black)
-                }
-            }
-            .sheet(isPresented: $showingAddMission) {
-                StoryCreateMissionView(showingAddMission: $showingAddMission, missions: $missions)
-                    .presentationDetents([.medium])
-                    .interactiveDismissDisabled()
+                .frame(width: .infinity)
+                .padding()
             }
         }
     }
@@ -111,9 +106,9 @@ private struct MissionList: View {
                     Text(mission.type.text)
                         .padding([.top, .bottom], 4)
                         .padding([.leading, .trailing], 8)
-                        .background(mission.type.color)
+                        .background(.black)
                         .foregroundStyle(.white)
-                        .clipShape(RoundedRectangle(cornerRadius: 12))
+                        .clipShape(RoundedRectangle(cornerRadius: 8))
                         .font(.caption)
                     Text(mission.title)
                         .font(.headline)
@@ -140,52 +135,46 @@ private struct StoryCreateMissionView: View {
 
     var body: some View {
         NavigationStack {
-            Form {
-                Section(header: Text("Mission Info")) {
-                    TextField("Title", text: $newMissionTitle)
+            VStack {
+                Form {
+                    Section(header: Text("Mission Info")) {
+                        TextField("Title", text: $newMissionTitle)
 
-                    TextField("Description", text: $newMissionDescription, axis: .vertical)
-                        .lineLimit(3 ... 5)
-                }
-                .listRowBackground(Color(.section))
+                        TextField("Description", text: $newMissionDescription, axis: .vertical)
+                            .lineLimit(3 ... 5)
+                    }
+                    .listRowBackground(Color(.section))
 
-                Section("Type") {
-                    Picker("Type", selection: $selectedMissionType) {
-                        Text(MissionType.main.text).tag(MissionType.main)
-                        Text(MissionType.side.text).tag(MissionType.side)
-                        Text(MissionType.repeat.text).tag(MissionType.repeat)
+                    Section("Type") {
+                        Picker("Type", selection: $selectedMissionType) {
+                            Text(MissionType.main.text).tag(MissionType.main)
+                            Text(MissionType.side.text).tag(MissionType.side)
+                            Text(MissionType.repeat.text).tag(MissionType.repeat)
+                        }
+                        .pickerStyle(.segmented)
                     }
-                    .pickerStyle(.segmented)
+                    .listRowBackground(Color(.section))
                 }
-                .listRowBackground(Color(.section))
+                .scrollContentBackground(.hidden)
+                .background(Color.primaryBackground)
+                .navigationTitle("Add Mission")
+                .navigationBarTitleDisplayMode(.inline)
+                .toolbar {
+                    ToolbarItem(placement: .topBarLeading) {
+                        Button("Cancel") {
+                            showingAddMission = false
+                        }
+                        .tint(.black)
+                    }
+                }
 
-                Section {
-                    Button {
-                        addMission()
-                        showingAddMission = false
-                    } label: {
-                        Text("Add")
-                            .bold()
-                            .frame(maxWidth: .infinity)
-                            .frame(height: 60)
-                            .foregroundStyle(newMissionTitle.isEmpty ? .buttonDisableForeground : .buttonForeground)
-                            .background(newMissionTitle.isEmpty ? Color(.buttonDisableBackground) : Color(.buttonBackground))
-                            .cornerRadius(16)
-                    }
-                    .disabled(newMissionTitle.isEmpty)
+                Spacer()
+
+                RichButton(title: "Add", color: Color.buttonBackground, icon: "sparkle", disabled: newMissionTitle.isEmpty) {
+                    addMission()
+                    showingAddMission = false
                 }
-            }
-            .scrollContentBackground(.hidden)
-            .background(Color.primaryBackground)
-            .navigationTitle("Add Mission")
-            .navigationBarTitleDisplayMode(.inline)
-            .toolbar {
-                ToolbarItem(placement: .topBarLeading) {
-                    Button("Cancel") {
-                        showingAddMission = false
-                    }
-                    .tint(.black)
-                }
+                .padding()
             }
         }
     }
@@ -208,11 +197,11 @@ private struct StoryCreateMissionView: View {
     }
 }
 
-#Preview {
+#Preview("CreateStoryView") {
     CreateStoryView()
         .environmentObject(MissionStore())
 }
 
-#Preview {
+#Preview("StoryCreateMissionView") {
     StoryCreateMissionView(showingAddMission: .constant(true), missions: .constant([]))
 }

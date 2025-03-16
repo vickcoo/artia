@@ -13,7 +13,7 @@ struct MissionsView: View {
     @Binding var showingDetail: Bool
     @Binding var selectedMissionId: UUID?
 
-    var filteredMissions: [Mission] {
+    var missionsFilterByStory: [Mission] {
         if let selectedStoryId = selectedStoryId {
             return store.missions.filter { $0.storyId == selectedStoryId }
         } else {
@@ -31,9 +31,9 @@ struct MissionsView: View {
 
             ScrollView {
                 LazyVStack(spacing: 16) {
-                    let mainMissions = filteredMissions.filter { $0.type == .main }
-                    let sideMissions = filteredMissions.filter { $0.type == .side }
-                    let repeatMissions = filteredMissions.filter { $0.type == .repeat }
+                    let mainMissions = missionsFilterByStory.filter { $0.type == .main && $0.isUncompleted }
+                    let sideMissions = missionsFilterByStory.filter { $0.type == .side && $0.isUncompleted }
+                    let repeatMissions = missionsFilterByStory.filter { $0.type == .repeat && $0.isUncompleted }
 
                     if mainMissions.isEmpty == false {
                         MissionList(title: mainMissions.first?.type.text ?? "-", missions: mainMissions) { mission in
@@ -56,7 +56,7 @@ struct MissionsView: View {
                         }
                     }
 
-                    if filteredMissions.isEmpty {
+                    if missionsFilterByStory.isEmpty {
                         VStack(spacing: 20) {
                             Image(systemName: "tray")
                                 .font(.system(size: 50))

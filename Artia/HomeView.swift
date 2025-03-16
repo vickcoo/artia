@@ -20,7 +20,7 @@ struct HomeView: View {
 
     @State var selectedTabType: TabType = .user
     @State var selectedTab: Tab = .missions
-    
+
     @State private var showingDetail = false
     @State private var selectedMissionId: UUID?
 

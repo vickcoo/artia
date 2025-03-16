@@ -28,79 +28,73 @@ struct CreateMissionView: View {
 
     var body: some View {
         NavigationStack {
-            Form {
-                Section(header: Text("Info")) {
-                    TextField("Title", text: $title)
-                    TextField("Description", text: $description, axis: .vertical)
-                        .lineLimit(3 ... 5)
-                }
-                .listRowBackground(Color(.section))
-
-                Section("Type") {
-                    Picker("Mission Type", selection: $selectedMissionType) {
-                        Text(MissionType.main.text).tag(MissionType.main)
-                        Text(MissionType.side.text).tag(MissionType.side)
-                        Text(MissionType.repeat.text).tag(MissionType.repeat)
+            VStack {
+                Form {
+                    Section(header: Text("Info")) {
+                        TextField("Title", text: $title)
+                        TextField("Description", text: $description, axis: .vertical)
+                            .lineLimit(3 ... 5)
                     }
-                    .pickerStyle(.segmented)
+                    .listRowBackground(Color(.section))
+
+                    Section("Type") {
+                        Picker("Mission Type", selection: $selectedMissionType) {
+                            Text(MissionType.main.text).tag(MissionType.main)
+                            Text(MissionType.side.text).tag(MissionType.side)
+                            Text(MissionType.repeat.text).tag(MissionType.repeat)
+                        }
+                        .pickerStyle(.segmented)
+                    }
+                    .listRowBackground(Color(.section))
+
+                    Section("Story (Optional)") {
+                        SelectStoryView(selectedStory: $selectedStory, showingStoryPicker: $showingStoryPicker)
+                    }
+                    .listRowBackground(Color(.section))
+
+                    Section("Conditions") {
+                        ConditionListView(conditions: $conditions)
+
+                        Button(action: {
+                            showingAddCondition = true
+                        }) {
+                            Label("Add Condition", systemImage: "plus.circle")
+                                .foregroundStyle(.black)
+                        }
+                    }
+                    .listRowBackground(Color(.section))
+
+                    Section("Rewards (Optional)") {
+                        RewardListView(rewards: $rewards)
+
+                        Button(action: {
+                            showingAddReward = true
+                        }) {
+                            Label("Add Reward", systemImage: "plus.circle")
+                                .foregroundStyle(.black)
+                        }
+                    }
+                    .listRowBackground(Color(.section))
                 }
-                .listRowBackground(Color(.section))
-
-                Section("Story (Optional)") {
-                    SelectStoryView(selectedStory: $selectedStory, showingStoryPicker: $showingStoryPicker)
-                }
-                .listRowBackground(Color(.section))
-
-                Section("Conditions") {
-                    ConditionListView(conditions: $conditions)
-
-                    Button(action: {
-                        showingAddCondition = true
-                    }) {
-                        Label("Add Condition", systemImage: "plus.circle")
-                            .foregroundStyle(.black)
+                .scrollContentBackground(.hidden)
+                .background(Color(.primaryBackground))
+                .navigationTitle("Create Mission")
+                .navigationBarTitleDisplayMode(.inline)
+                .toolbar {
+                    ToolbarItem(placement: .topBarLeading) {
+                        Button("Cancel") {
+                            dismiss()
+                        }
+                        .tint(.black)
                     }
                 }
-                .listRowBackground(Color(.section))
 
-                Section("Rewards (Optional)") {
-                    RewardListView(rewards: $rewards)
+                Spacer()
 
-                    Button(action: {
-                        showingAddReward = true
-                    }) {
-                        Label("Add Reward", systemImage: "plus.circle")
-                            .foregroundStyle(.black)
-                    }
+                RichButton(title: "Create", color: Color.buttonBackground, icon: "sparkle", disabled: title.isEmpty) {
+                    createMission()
                 }
-                .listRowBackground(Color(.section))
-
-                Section {
-                    Button {
-                        createMission()
-                    } label: {
-                        Text("Create")
-                            .bold()
-                            .frame(maxWidth: .infinity)
-                            .frame(height: 60)
-                            .foregroundStyle(title.isEmpty ? .buttonDisableForeground : .buttonForeground)
-                            .background(title.isEmpty ? Color(.buttonDisableBackground) : Color(.buttonBackground))
-                            .cornerRadius(16)
-                    }
-                    .disabled(title.isEmpty)
-                }
-            }
-            .scrollContentBackground(.hidden)
-            .background(Color(.primaryBackground))
-            .navigationTitle("Create Mission")
-            .navigationBarTitleDisplayMode(.inline)
-            .toolbar {
-                ToolbarItem(placement: .topBarLeading) {
-                    Button("Cancel") {
-                        dismiss()
-                    }
-                    .tint(.black)
-                }
+                .padding()
             }
             .sheet(isPresented: $showingStoryPicker) {
                 StoryPickerView(selectedStory: $selectedStory, stories: missionStore.stories)
@@ -323,52 +317,46 @@ struct AddConditionView: View {
 
     var body: some View {
         NavigationStack {
-            Form {
-                Section("Type") {
-                    Picker("Type", selection: $conditionType) {
-                        Text("Image").tag(MissionConditionType.image)
-                        Text("Health").tag(MissionConditionType.healthKit)
-                    }
-                    .pickerStyle(.segmented)
-                }
-                .listRowBackground(Color(.section))
-
-                Section("Info") {
-                    TextField("Title", text: $conditionTitle)
-
-                    if conditionType == .healthKit {
-                        Picker("Health Category", selection: $selectedHealthType) {
-                            Text("Steps").tag(HealthKitConditionType.steps)
-                            Text("Calories").tag(HealthKitConditionType.calories)
-                            Text("ML").tag(HealthKitConditionType.water)
+            VStack {
+                Form {
+                    Section("Type") {
+                        Picker("Type", selection: $conditionType) {
+                            Text("Image").tag(MissionConditionType.image)
+                            Text("Health").tag(MissionConditionType.healthKit)
                         }
-                        .pickerStyle(.menu)
-                        .tint(.brown)
+                        .pickerStyle(.segmented)
                     }
+                    .listRowBackground(Color(.section))
 
-                    HStack {
-                        Text("Goal")
-                        Spacer()
-                        Stepper("\(Int(conditionGoal))", value: $conditionGoal, in: 1 ... 100)
-                    }
-                }
-                .listRowBackground(Color(.section))
+                    Section("Info") {
+                        TextField("Title", text: $conditionTitle)
 
-                Section {
-                    Button {
-                        addCondition()
-                        showingAddCondition = false
-                    } label: {
-                        Text("Add")
-                            .bold()
-                            .frame(maxWidth: .infinity)
-                            .frame(height: 60)
-                            .foregroundStyle(conditionTitle.isEmpty ? .buttonDisableForeground : .buttonForeground)
-                            .background(conditionTitle.isEmpty ? Color(.buttonDisableBackground) : Color(.buttonBackground))
-                            .cornerRadius(16)
+                        if conditionType == .healthKit {
+                            Picker("Health Category", selection: $selectedHealthType) {
+                                Text("Steps").tag(HealthKitConditionType.steps)
+                                Text("Calories").tag(HealthKitConditionType.calories)
+                                Text("ML").tag(HealthKitConditionType.water)
+                            }
+                            .pickerStyle(.menu)
+                            .tint(.gray)
+                        }
+
+                        HStack {
+                            Text("Goal")
+                            Spacer()
+                            Stepper("\(Int(conditionGoal))", value: $conditionGoal, in: 1 ... 100)
+                        }
                     }
-                    .disabled(conditionTitle.isEmpty)
+                    .listRowBackground(Color(.section))
                 }
+
+                Spacer()
+
+                RichButton(title: "Add", color: Color.buttonBackground, icon: "sparkle", disabled: conditionTitle.isEmpty) {
+                    addCondition()
+                    showingAddCondition = false
+                }
+                .padding()
             }
             .scrollContentBackground(.hidden)
             .background(Color(.primaryBackground))
@@ -417,29 +405,23 @@ struct AddRewardView: View {
 
     var body: some View {
         NavigationStack {
-            Form {
-                Section("Info") {
-                    TextField("Title", text: $rewardTitle)
-                    TextField("Description", text: $rewardDescription, axis: .vertical)
-                        .lineLimit(2 ... 4)
-                }
-                .listRowBackground(Color(.section))
-
-                Section {
-                    Button {
-                        addReward()
-                        showingAddReward = false
-                    } label: {
-                        Text("Add")
-                            .bold()
-                            .frame(maxWidth: .infinity)
-                            .frame(height: 60)
-                            .foregroundStyle(rewardTitle.isEmpty ? .buttonDisableForeground : .buttonForeground)
-                            .background(rewardTitle.isEmpty ? Color(.buttonDisableBackground) : Color(.buttonBackground))
-                            .cornerRadius(16)
+            VStack {
+                Form {
+                    Section("Info") {
+                        TextField("Title", text: $rewardTitle)
+                        TextField("Description", text: $rewardDescription, axis: .vertical)
+                            .lineLimit(2 ... 4)
                     }
-                    .disabled(rewardTitle.isEmpty)
+                    .listRowBackground(Color(.section))
                 }
+
+                Spacer()
+
+                RichButton(title: "Add", color: Color.buttonBackground, icon: "sparkle", disabled: rewardTitle.isEmpty) {
+                    addReward()
+                    showingAddReward = false
+                }
+                .padding()
             }
             .scrollContentBackground(.hidden)
             .background(Color(.primaryBackground))

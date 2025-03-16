@@ -5,7 +5,7 @@ final class Mission: Identifiable, ObservableObject {
     let id: UUID
     let title: String
     let description: String
-    let status: MissionStatus
+    @Published var status: MissionStatus
     let type: MissionType
     let storyId: UUID?
     @Published var conditions: [any MissionCondition]
@@ -21,10 +21,16 @@ final class Mission: Identifiable, ObservableObject {
         self.conditions = conditions
         self.rewards = rewards
     }
-    
-    var isCompleted: Bool {
-        conditions.allSatisfy { $0.isCompleted() }
-    }
+
+    func finish() { status = .done }
+
+    var isCompleted: Bool { status == .done }
+
+    var isUncompleted: Bool { !isCompleted }
+
+    var canCompleted: Bool { conditions.allSatisfy { $0.isCompleted() } }
+
+    var canNotCompleted: Bool { !canCompleted }
 }
 
 extension Mission: Equatable {
@@ -42,7 +48,7 @@ enum MissionType: String, Codable {
     case main
     case side
     case `repeat`
-    
+
     var text: String {
         switch self {
         case .main:
@@ -53,7 +59,7 @@ enum MissionType: String, Codable {
             return "Repeat"
         }
     }
-    
+
     var color: Color {
         switch self {
         case .main:

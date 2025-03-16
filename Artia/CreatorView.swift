@@ -7,34 +7,6 @@
 
 import SwiftUI
 
-struct ShortcutButton: View {
-    let icon: String
-    let title: String
-    let color: Color
-    let action: () -> Void
-
-    var body: some View {
-        Button(action: action) {
-            HStack {
-                Image(systemName: icon)
-                    .font(.system(size: 24))
-                    .foregroundColor(.white)
-
-                Text(title)
-                    .font(.system(size: 13, weight: .bold))
-                    .foregroundColor(.white)
-
-                Spacer()
-            }
-            .padding()
-            .frame(maxWidth: .infinity)
-            .frame(height: 60)
-            .background(Color.buttonBackground)
-            .cornerRadius(16)
-        }
-    }
-}
-
 struct CreatorView: View {
     @EnvironmentObject private var store: MissionStore
     @State private var showCreateMissionView = false
@@ -46,11 +18,11 @@ struct CreatorView: View {
                 GridItem(.flexible(), spacing: 16),
                 GridItem(.flexible(), spacing: 16),
             ], spacing: 16) {
-                ShortcutButton(icon: "plus.circle.fill", title: "Create Mission", color: .brown.opacity(0.1)) {
+                ShortcutButton(icon: "plus.circle.fill", title: "Create Mission", color: Color.buttonBackground) {
                     showCreateMissionView = true
                 }
 
-                ShortcutButton(icon: "book", title: "Create Story", color: .brown.opacity(0.1)) {
+                ShortcutButton(icon: "book.fill", title: "Create Story", color: Color.buttonBackground) {
                     showCreateStoryView = true
                 }
             }
