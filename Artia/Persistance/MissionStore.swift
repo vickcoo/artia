@@ -8,6 +8,7 @@
 import Foundation
 
 // MARK: Mission
+
 class MissionStore: ObservableObject {
     @Published var stories: [Story] = MockData.stories
     @Published var selectedMission: Mission?
@@ -15,6 +16,20 @@ class MissionStore: ObservableObject {
     func addMission(mission: Mission, to storyId: UUID) {
         if let index = stories.firstIndex(where: { $0.id == storyId }) {
             stories[index].missions.append(mission)
+        }
+    }
+
+    func updateMission(mission: Mission, in story: Story) {
+        guard let originStory = getStory(by: mission) else { return }
+        guard let originStoryIndex = stories.firstIndex(where: { $0.id == originStory.id }) else { return }
+        guard let newStoryIndex = stories.firstIndex(where: { $0.id == story.id }) else { return }
+        guard let missionIndex = stories[originStoryIndex].missions.firstIndex(where: { $0.id == mission.id }) else { return }
+
+        if originStory.id != story.id {
+            stories[originStoryIndex].removeMission(by: mission)
+            stories[newStoryIndex].addMission(mission)
+        } else {
+            stories[originStoryIndex].missions[missionIndex] = mission
         }
     }
 
@@ -28,6 +43,7 @@ class MissionStore: ObservableObject {
 }
 
 // MARK: Story
+
 extension MissionStore {
     func addStory(_ story: Story) {
         stories.append(story)

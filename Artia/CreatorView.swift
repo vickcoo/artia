@@ -12,6 +12,8 @@ enum CreatorViewSheetType: Identifiable {
     case createMission
     case createStory
     case selectStory
+    case selectMission
+    case editMission(_ mission: Mission)
     case editStory(_ story: Story)
 }
 
@@ -19,6 +21,7 @@ struct CreatorView: View {
     @EnvironmentObject private var store: MissionStore
     @State private var selectedStory: Story?
     @State private var sheetType: CreatorViewSheetType?
+    @State private var selectedMission: Mission?
 
     var body: some View {
         ScrollView {
@@ -37,6 +40,10 @@ struct CreatorView: View {
                 ShortcutButton(icon: "book.fill", title: "Edit Story", color: Color.buttonBackground) {
                     showSheet(.selectStory)
                 }
+
+                ShortcutButton(icon: "book.fill", title: "Edit Mission", color: Color.buttonBackground) {
+                    showSheet(.selectMission)
+                }
             }
             .padding()
         }
@@ -53,12 +60,20 @@ struct CreatorView: View {
                     showSheet(.editStory(story))
                 }
                 .presentationDetents([.medium])
-            case .editStory(let story):
+            case let .editStory(story):
                 EditStoryView(story: story)
+            case .selectMission:
+                MissionPickerView(selectedMission: $selectedMission) { mission in
+                    showSheet(.editMission(mission))
+                }
+            case let .editMission(mission):
+                if let story = store.getStory(by: mission) {
+                    EditMissionView(mission: mission, story: story)
+                }
             }
         }
     }
-    
+
     private func showSheet(_ type: CreatorViewSheetType) {
         DispatchQueue.main.async {
             sheetType = type
@@ -68,4 +83,5 @@ struct CreatorView: View {
 
 #Preview {
     CreatorView()
+        .environmentObject(MissionStore())
 }

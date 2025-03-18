@@ -42,7 +42,8 @@ enum MissionStatus: String, Codable {
     case done
 }
 
-enum MissionType: String, Codable {
+enum MissionType: String, Codable, Identifiable {
+    var id: String { rawValue }
     case main
     case side
     case `repeat`
