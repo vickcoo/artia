@@ -267,16 +267,19 @@ struct RewardListView: View {
 }
 
 struct StoryPickerView: View {
+    @EnvironmentObject var store: MissionStore
     @Binding var selectedStory: Story?
     let stories: [Story]
     @Environment(\.dismiss) private var dismiss
+    var completion: (Story) -> Void = {_ in }
 
     var body: some View {
         NavigationStack {
             List {
-                ForEach(MockData.stories) { story in
+                ForEach(store.stories) { story in
                     Button(action: {
                         selectedStory = story
+                        completion(story)
                         dismiss()
                     }) {
                         VStack(alignment: .leading) {
