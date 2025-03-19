@@ -30,15 +30,15 @@ struct CreateMissionView: View {
         NavigationStack {
             VStack {
                 Form {
-                    Section(header: Text("Info")) {
-                        TextField("Title", text: $title)
-                        TextField("Description", text: $description, axis: .vertical)
+                    Section(header: Text(i18n.info.localized)) {
+                        TextField(i18n.title.localized, text: $title)
+                        TextField(i18n.description.localized, text: $description, axis: .vertical)
                             .lineLimit(3 ... 5)
                     }
                     .listRowBackground(Color(.section))
 
-                    Section("Type") {
-                        Picker("Mission Type", selection: $selectedMissionType) {
+                    Section(i18n.type.localized) {
+                        Picker(i18n.missionType.localized, selection: $selectedMissionType) {
                             Text(MissionType.main.text).tag(MissionType.main)
                             Text(MissionType.side.text).tag(MissionType.side)
                             Text(MissionType.repeat.text).tag(MissionType.repeat)
@@ -47,30 +47,30 @@ struct CreateMissionView: View {
                     }
                     .listRowBackground(Color(.section))
 
-                    Section("Story (Optional)") {
+                    Section(i18n.story.localized) {
                         SelectStoryView(selectedStory: $selectedStory, showingStoryPicker: $showingStoryPicker)
                     }
                     .listRowBackground(Color(.section))
 
-                    Section("Conditions") {
+                    Section(i18n.conditions.localized) {
                         ConditionListView(conditions: $conditions)
 
                         Button(action: {
                             showingAddCondition = true
                         }) {
-                            Label("Add Condition", systemImage: "plus.circle")
+                            Label(i18n.addCondition.localized, systemImage: "plus.circle")
                                 .foregroundStyle(.black)
                         }
                     }
                     .listRowBackground(Color(.section))
 
-                    Section("Rewards (Optional)") {
+                    Section(i18n.reward.localized) {
                         RewardListView(rewards: $rewards)
 
                         Button(action: {
                             showingAddReward = true
                         }) {
-                            Label("Add Reward", systemImage: "plus.circle")
+                            Label(i18n.addReward.localized, systemImage: "plus.circle")
                                 .foregroundStyle(.black)
                         }
                     }
@@ -78,11 +78,11 @@ struct CreateMissionView: View {
                 }
                 .scrollContentBackground(.hidden)
                 .background(Color(.primaryBackground))
-                .navigationTitle("Create Mission")
+                .navigationTitle(i18n.createMission.localized)
                 .navigationBarTitleDisplayMode(.inline)
                 .toolbar {
                     ToolbarItem(placement: .topBarLeading) {
-                        Button("Cancel") {
+                        Button(i18n.cancel.localized) {
                             dismiss()
                         }
                         .tint(.black)
@@ -91,7 +91,7 @@ struct CreateMissionView: View {
 
                 Spacer()
 
-                RichButton(title: "Create", color: Color.buttonBackground, icon: "sparkle", disabled: title.isEmpty) {
+                RichButton(title: i18n.create.localized, color: Color.buttonBackground, icon: "sparkle", disabled: title.isEmpty) {
                     createMission()
                 }
                 .padding()
@@ -159,7 +159,7 @@ struct SelectStoryView: View {
             Button(action: {
                 showingStoryPicker = true
             }) {
-                Label("Select Story", systemImage: "book")
+                Label(i18n.selectStory.localized, systemImage: "book")
                     .foregroundStyle(.black)
             }
         }
@@ -175,7 +175,7 @@ struct ConditionListView: View {
                 HStack {
                     VStack(alignment: .leading) {
                         HStack {
-                            Text("Image Condition")
+                            Text(i18n.imageCondition.localized)
                                 .font(.headline)
                             Text("\(Int(imageCondition.goal))x Images")
                                 .font(.subheadline)
@@ -200,7 +200,7 @@ struct ConditionListView: View {
                 HStack {
                     VStack(alignment: .leading) {
                         HStack {
-                            Text("Health Condition")
+                            Text(i18n.healthCondition.localized)
                                 .font(.headline)
                             Text("\(Int(healthCondition.goal)) \(healthTypeUnit(healthCondition.healthType))")
                                 .font(.subheadline)
@@ -228,11 +228,11 @@ struct ConditionListView: View {
     private func healthTypeUnit(_ type: HealthKitConditionType) -> String {
         switch type {
         case .steps:
-            return "Steps"
+            return i18n.steps.localized
         case .calories:
-            return "Calories"
+            return i18n.calories.localized
         case .water:
-            return "ml"
+            return i18n.ml.localized
         }
     }
 }
@@ -296,11 +296,11 @@ struct StoryPickerView: View {
             .listStyle(PlainListStyle())
             .scrollContentBackground(.hidden)
             .background(Color.primaryBackground)
-            .navigationTitle("Select Story")
+            .navigationTitle(i18n.selectStory.localized)
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
                 ToolbarItem(placement: .topBarLeading) {
-                    Button("Cancel") {
+                    Button(i18n.cancel.localized) {
                         dismiss()
                     }
                     .tint(.black)
@@ -323,30 +323,30 @@ struct AddConditionView: View {
         NavigationStack {
             VStack {
                 Form {
-                    Section("Type") {
-                        Picker("Type", selection: $conditionType) {
-                            Text("Image").tag(MissionConditionType.image)
-                            Text("Health").tag(MissionConditionType.healthKit)
+                    Section(i18n.type.localized) {
+                        Picker(i18n.type.localized, selection: $conditionType) {
+                            Text(i18n.image.localized).tag(MissionConditionType.image)
+                            Text(i18n.health.localized).tag(MissionConditionType.healthKit)
                         }
                         .pickerStyle(.segmented)
                     }
                     .listRowBackground(Color(.section))
 
-                    Section("Info") {
-                        TextField("Title", text: $conditionTitle)
+                    Section(i18n.info.localized) {
+                        TextField(i18n.title.localized, text: $conditionTitle)
 
                         if conditionType == .healthKit {
-                            Picker("Health Category", selection: $selectedHealthType) {
-                                Text("Steps").tag(HealthKitConditionType.steps)
-                                Text("Calories").tag(HealthKitConditionType.calories)
-                                Text("ML").tag(HealthKitConditionType.water)
+                            Picker(i18n.healthCategory.localized, selection: $selectedHealthType) {
+                                Text(i18n.steps.localized).tag(HealthKitConditionType.steps)
+                                Text(i18n.calories.localized).tag(HealthKitConditionType.calories)
+                                Text(i18n.ml.localized).tag(HealthKitConditionType.water)
                             }
                             .pickerStyle(.menu)
                             .tint(.gray)
                         }
 
                         HStack {
-                            Text("Goal")
+                            Text(i18n.goal.localized)
                             Spacer()
                             Stepper("\(Int(conditionGoal))", value: $conditionGoal, in: 1 ... 100)
                         }
@@ -356,7 +356,7 @@ struct AddConditionView: View {
 
                 Spacer()
 
-                RichButton(title: "Add", color: Color.buttonBackground, icon: "sparkle", disabled: conditionTitle.isEmpty) {
+                RichButton(title: i18n.add.localized, color: Color.buttonBackground, icon: "sparkle", disabled: conditionTitle.isEmpty) {
                     addCondition()
                     showingAddCondition = false
                 }
@@ -364,11 +364,11 @@ struct AddConditionView: View {
             }
             .scrollContentBackground(.hidden)
             .background(Color(.primaryBackground))
-            .navigationTitle("Add Condition")
+            .navigationTitle(i18n.addCondition.localized)
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
                 ToolbarItem(placement: .topBarLeading) {
-                    Button("Cancel") {
+                    Button(i18n.cancel.localized) {
                         dismiss()
                     }
                     .tint(.black)
@@ -411,9 +411,9 @@ struct AddRewardView: View {
         NavigationStack {
             VStack {
                 Form {
-                    Section("Info") {
-                        TextField("Title", text: $rewardTitle)
-                        TextField("Description", text: $rewardDescription, axis: .vertical)
+                    Section(i18n.info.localized) {
+                        TextField(i18n.title.localized, text: $rewardTitle)
+                        TextField(i18n.description.localized, text: $rewardDescription, axis: .vertical)
                             .lineLimit(2 ... 4)
                     }
                     .listRowBackground(Color(.section))
@@ -421,7 +421,7 @@ struct AddRewardView: View {
 
                 Spacer()
 
-                RichButton(title: "Add", color: Color.buttonBackground, icon: "sparkle", disabled: rewardTitle.isEmpty) {
+                RichButton(title: i18n.add.localized, color: Color.buttonBackground, icon: "sparkle", disabled: rewardTitle.isEmpty) {
                     addReward()
                     showingAddReward = false
                 }
@@ -429,11 +429,11 @@ struct AddRewardView: View {
             }
             .scrollContentBackground(.hidden)
             .background(Color(.primaryBackground))
-            .navigationTitle("Add Reward")
+            .navigationTitle(i18n.addReward.localized)
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
                 ToolbarItem(placement: .topBarLeading) {
-                    Button("Cancel") {
+                    Button(i18n.cancel.localized) {
                         dismiss()
                     }
                     .tint(.black)

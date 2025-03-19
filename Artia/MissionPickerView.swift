@@ -50,15 +50,15 @@ struct MissionPickerView: View {
                     Dropdown(
                         selectedOption: $filteredStory,
                         options: storyDropdownOptions,
-                        title: "Select Story",
-                        allOptionTitle: "All"
+                        title: i18n.selectStory.localized,
+                        allOptionTitle: i18n.all.localized
                     )
 
                     Dropdown(
                         selectedOption: $filteredMissionType,
                         options: missionTypeOptions,
-                        title: "Mission Type",
-                        allOptionTitle: "All"
+                        title: i18n.missionType.localized,
+                        allOptionTitle: i18n.all.localized
                     )
                 }
                 .padding(.horizontal)
@@ -84,11 +84,11 @@ struct MissionPickerView: View {
                 .listStyle(PlainListStyle())
                 .scrollContentBackground(.hidden)
                 .background(Color.primaryBackground)
-                .navigationTitle("Select Mission")
+                .navigationTitle(i18n.selectMission.localized)
                 .navigationBarTitleDisplayMode(.inline)
                 .toolbar {
                     ToolbarItem(placement: .topBarLeading) {
-                        Button("Cancel") {
+                        Button(i18n.cancel.localized) {
                             dismiss()
                         }
                         .tint(.black)

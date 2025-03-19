@@ -20,20 +20,20 @@ struct CreateStoryView: View {
         NavigationStack {
             VStack {
                 Form {
-                    Section(header: Text("Info")) {
-                        TextField("Title", text: $title)
-                        TextField("Description", text: $description, axis: .vertical)
+                    Section(header: Text(i18n.info.localized)) {
+                        TextField(i18n.title.localized, text: $title)
+                        TextField(i18n.description.localized, text: $description, axis: .vertical)
                             .lineLimit(4 ... 6)
                     }
                     .listRowBackground(Color(.section))
 
-                    Section("Missions (Optional)") {
+                    Section(i18n.missions.localized) {
                         MissionList(missions: $missions, deleteMission: deleteMission)
 
                         Button(action: {
                             showingAddMission = true
                         }) {
-                            Label("Add Mission", systemImage: "plus.circle")
+                            Label(i18n.addMission.localized, systemImage: "plus.circle")
                                 .foregroundStyle(.black)
                         }
                     }
@@ -41,11 +41,11 @@ struct CreateStoryView: View {
                 }
                 .scrollContentBackground(.hidden)
                 .background(Color(.primaryBackground))
-                .navigationTitle("Create a story")
+                .navigationTitle(i18n.createStory.localized)
                 .navigationBarTitleDisplayMode(.inline)
                 .toolbar {
                     ToolbarItem(placement: .topBarLeading) {
-                        Button("Cancel") {
+                        Button(i18n.cancel.localized) {
                             dismiss()
                         }
                         .tint(.black)
@@ -59,10 +59,9 @@ struct CreateStoryView: View {
 
                 Spacer()
 
-                RichButton(title: "Add", color: Color.buttonBackground, icon: "sparkle", disabled: title.isEmpty) {
+                RichButton(title: i18n.add.localized, color: Color.buttonBackground, icon: "sparkle", disabled: title.isEmpty) {
                     saveStory()
                 }
-                .frame(width: .infinity)
                 .padding()
             }
         }
@@ -124,16 +123,16 @@ private struct StoryCreateMissionView: View {
         NavigationStack {
             VStack {
                 Form {
-                    Section(header: Text("Mission Info")) {
-                        TextField("Title", text: $newMissionTitle)
+                    Section(header: Text(i18n.info.localized)) {
+                        TextField(i18n.title.localized, text: $newMissionTitle)
 
-                        TextField("Description", text: $newMissionDescription, axis: .vertical)
+                        TextField(i18n.description.localized, text: $newMissionDescription, axis: .vertical)
                             .lineLimit(3 ... 5)
                     }
                     .listRowBackground(Color(.section))
 
-                    Section("Type") {
-                        Picker("Type", selection: $selectedMissionType) {
+                    Section(i18n.type.localized) {
+                        Picker(i18n.type.localized, selection: $selectedMissionType) {
                             Text(MissionType.main.text).tag(MissionType.main)
                             Text(MissionType.side.text).tag(MissionType.side)
                             Text(MissionType.repeat.text).tag(MissionType.repeat)
@@ -144,11 +143,11 @@ private struct StoryCreateMissionView: View {
                 }
                 .scrollContentBackground(.hidden)
                 .background(Color.primaryBackground)
-                .navigationTitle("Add Mission")
+                .navigationTitle(i18n.addMission.localized)
                 .navigationBarTitleDisplayMode(.inline)
                 .toolbar {
                     ToolbarItem(placement: .topBarLeading) {
-                        Button("Cancel") {
+                        Button(i18n.cancel.localized) {
                             showingAddMission = false
                         }
                         .tint(.black)
@@ -157,7 +156,7 @@ private struct StoryCreateMissionView: View {
 
                 Spacer()
 
-                RichButton(title: "Add", color: Color.buttonBackground, icon: "sparkle", disabled: newMissionTitle.isEmpty) {
+                RichButton(title: i18n.add.localized, color: Color.buttonBackground, icon: "sparkle", disabled: newMissionTitle.isEmpty) {
                     addMission()
                     showingAddMission = false
                 }

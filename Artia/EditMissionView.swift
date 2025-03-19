@@ -36,15 +36,15 @@ struct EditMissionView: View {
         NavigationStack {
             VStack {
                 Form {
-                    Section(header: Text("Info")) {
-                        TextField("Title", text: $title)
-                        TextField("Description", text: $description, axis: .vertical)
+                    Section(header: Text(i18n.info.localized)) {
+                        TextField(i18n.title.localized, text: $title)
+                        TextField(i18n.description.localized, text: $description, axis: .vertical)
                             .lineLimit(3 ... 5)
                     }
                     .listRowBackground(Color(.section))
 
-                    Section("Type") {
-                        Picker("Mission Type", selection: $selectedMissionType) {
+                    Section(i18n.type.localized) {
+                        Picker(i18n.type.localized, selection: $selectedMissionType) {
                             Text(MissionType.main.text).tag(MissionType.main)
                             Text(MissionType.side.text).tag(MissionType.side)
                             Text(MissionType.repeat.text).tag(MissionType.repeat)
@@ -53,30 +53,30 @@ struct EditMissionView: View {
                     }
                     .listRowBackground(Color(.section))
 
-                    Section("Story") {
+                    Section(i18n.story.localized) {
                         SelectStoryView(selectedStory: $selectedStory, showingStoryPicker: $showingStoryPicker)
                     }
                     .listRowBackground(Color(.section))
 
-                    Section("Conditions") {
+                    Section(i18n.conditions.localized) {
                         ConditionListView(conditions: $conditions)
 
                         Button(action: {
                             showingAddCondition = true
                         }) {
-                            Label("Add Condition", systemImage: "plus.circle")
+                            Label(i18n.addCondition.localized, systemImage: "plus.circle")
                                 .foregroundStyle(.black)
                         }
                     }
                     .listRowBackground(Color(.section))
 
-                    Section("Rewards") {
+                    Section(i18n.reward.localized) {
                         RewardListView(rewards: $rewards)
 
                         Button(action: {
                             showingAddReward = true
                         }) {
-                            Label("Add Reward", systemImage: "plus.circle")
+                            Label(i18n.addReward.localized, systemImage: "plus.circle")
                                 .foregroundStyle(.black)
                         }
                     }
@@ -84,11 +84,11 @@ struct EditMissionView: View {
                 }
                 .scrollContentBackground(.hidden)
                 .background(Color(.primaryBackground))
-                .navigationTitle("Edit Mission")
+                .navigationTitle(i18n.editMission.localized)
                 .navigationBarTitleDisplayMode(.inline)
                 .toolbar {
                     ToolbarItem(placement: .topBarLeading) {
-                        Button("Cancel") {
+                        Button(i18n.cancel.localized) {
                             dismiss()
                         }
                         .tint(.black)
@@ -97,7 +97,7 @@ struct EditMissionView: View {
 
                 Spacer()
 
-                RichButton(title: "Save", color: Color.buttonBackground, icon: "sparkle", disabled: title.isEmpty) {
+                RichButton(title: i18n.save.localized, color: Color.buttonBackground, icon: "sparkle", disabled: title.isEmpty) {
                     saveMission()
                 }
                 .padding()

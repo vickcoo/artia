@@ -29,19 +29,19 @@ struct CreatorView: View {
                 GridItem(.flexible(), spacing: 16),
                 GridItem(.flexible(), spacing: 16),
             ], spacing: 16) {
-                ShortcutButton(icon: "plus.circle.fill", title: "Create Mission", color: Color.buttonBackground) {
+                ShortcutButton(icon: "plus.circle.fill", title: i18n.createMission.localized, color: Color.buttonBackground) {
                     showSheet(.createMission)
                 }
 
-                ShortcutButton(icon: "book.fill", title: "Create Story", color: Color.buttonBackground) {
+                ShortcutButton(icon: "book.fill", title: i18n.createStory.localized, color: Color.buttonBackground) {
                     showSheet(.createStory)
                 }
 
-                ShortcutButton(icon: "book.fill", title: "Edit Story", color: Color.buttonBackground) {
+                ShortcutButton(icon: "book.fill", title: i18n.editStory.localized, color: Color.buttonBackground) {
                     showSheet(.selectStory)
                 }
 
-                ShortcutButton(icon: "book.fill", title: "Edit Mission", color: Color.buttonBackground) {
+                ShortcutButton(icon: "book.fill", title: i18n.editMission.localized, color: Color.buttonBackground) {
                     showSheet(.selectMission)
                 }
             }

@@ -1,0 +1,90 @@
+/* MARK: - Tabs */
+"missions" = "Missions";
+"journey" = "Journey";
+"creator" = "Creator";
+
+/* MARK: - Common */
+"all" = "All";
+"finish" = "Finish";
+"cancel" = "Cancel";
+"add" = "Add";
+"info" = "Info";
+"title" = "Title";
+"description" = "Description";
+"content" = "Content";
+"create" = "Create";
+"save" = "Save";
+"delete" = "Delete";
+"edit" = "Edit";
+"back" = "Back";
+"next" = "Next";
+"done" = "Done";
+"settings" = "Settings";
+"select" = "Select";
+
+"noMission" = "No Mission";
+"noMissionInThisStory" = "No Mission for this Story";
+
+/* MARK: - Mission Related */
+"editMission" = "Edit Mission";
+"addMission" = "Add Mission";
+"addCondition" = "Add Condition";
+"addReward" = "Add Reward";
+"createMission" = "Create Mission";
+"selectMission" = "Select Mission";
+"selectStory" = "Select Story";
+"reward" = "Reward";
+"mainMission" = "Main Mission";
+"sideMission" = "Side Mission";
+"repeatMission" = "Repeat Mission";
+
+/* MARK: - Mission Types */
+"missionType" = "Mission Type";
+"main" = "Main";
+"side" = "Side";
+"repeat" = "Repeat";
+
+/* MARK: - Story Related */
+"story" = "Story";
+"createStory" = "Create Story";
+"editStory" = "Edit Story";
+
+/* MARK: - Conditions */
+"conditions" = "Conditions";
+"imageCondition" = "Image Condition";
+"xImages" = "%d Images";
+"healthCondition" = "Health Condition";
+"healthCategory" = "Health Category";
+"goal" = "Goal";
+
+/* MARK: - Health Related */
+"health" = "Health";
+"steps" = "Steps";
+"calories" = "Calories";
+"water" = "Water";
+"ml" = "ml";
+"type" = "Type";
+
+/* MARK: - Images */
+"image" = "Image";
+
+/* MARK: - Language Settings */
+"language" = "Language";
+"languageSettings" = "Language Settings";
+"appLanguage" = "App Language";
+"restartAppNotice" = "You may need to restart the app for all changes to take effect";
+
+/* MARK: - Format Strings */
+"itemAt" = "Item at %@";
+
+/* Common */
+"Item at %@" = "Item at %@";
+"Back" = "Back";
+"Next" = "Next";
+"Done" = "Done";
+
+/* Settings */
+"Language" = "Language";
+"Language Settings" = "Language Settings";
+"App Language" = "App Language";
+"You may need to restart the app for all changes to take effect" = "You may need to restart the app for all changes to take effect"; 

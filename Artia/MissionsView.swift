@@ -63,11 +63,11 @@ struct MissionsView: View {
                                 .foregroundColor(.gray)
 
                             if selectedStoryId != nil {
-                                Text("No Mission for this Story")
+                                Text(i18n.NoMissionInThisStory.localized)
                                     .font(.headline)
                                     .foregroundColor(.gray)
                             } else {
-                                Text("No Mission")
+                                Text(i18n.noMission.localized)
                                     .font(.headline)
                                     .foregroundColor(.gray)
                             }

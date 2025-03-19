@@ -23,7 +23,7 @@ struct ChipView: View {
                 Button(action: {
                     selectedOptionId = nil
                 }) {
-                    Text("All")
+                    Text(i18n.all.localized)
                         .padding(.horizontal, 16)
                         .padding(.vertical, 8)
                         .foregroundColor(selectedOptionId == nil ? .white : .primary)

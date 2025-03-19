@@ -54,7 +54,7 @@ struct MissionDetailView: View {
                 .padding()
             }
 
-            RichButton(title: "Finish", color: .black, icon: "sparkle", disabled: mission.canNotCompleted) {
+            RichButton(title: i18n.finish.localized, color: .black, icon: "sparkle", disabled: mission.canNotCompleted) {
                 mission.finish()
                 dismiss()
             }
@@ -72,7 +72,7 @@ private struct RewardView: View {
 
     var body: some View {
         VStack {
-            Text("Reward")
+            Text(i18n.reward.localized)
                 .font(.subheadline)
                 .fontWeight(.medium)
 
@@ -143,7 +143,7 @@ private struct HealthKitConditionView: View {
     var body: some View {
         VStack(alignment: .leading) {
             HStack {
-                Text("Health")
+                Text(i18n.health.localized)
                     .font(.headline)
                 if condition.isCompleted() {
                     Image(systemName: "checkmark.circle.fill")
@@ -152,7 +152,7 @@ private struct HealthKitConditionView: View {
             }
             Spacer(minLength: 10)
             HStack(alignment: .bottom) {
-                ProgressView("Steps", value: condition.value)
+                ProgressView(i18n.steps.localized, value: condition.value)
                     .tint(.repeatTaskGreen)
                 Text("\(Int(condition.value))/\(Int(condition.goal))")
                     .font(.subheadline)

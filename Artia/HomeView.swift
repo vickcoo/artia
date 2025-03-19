@@ -8,11 +8,22 @@ enum TabType {
 
 enum Tab: String {
     // User
-    case missions = "Missions"
-    case journey = "Journey"
+    case missions
+    case journey
 
     // Creator
-    case creator = "Creator"
+    case creator
+    
+    var title: String {
+        switch self {
+        case .missions:
+            return i18n.missions.localized
+        case .journey:
+            return i18n.journey.localized
+        case .creator:
+            return i18n.creator.localized
+        }
+    }
 }
 
 struct HomeView: View {
@@ -85,16 +96,16 @@ struct TopTabView: View {
         TabView(selection: $selectedTabType) {
             HStack {
                 Spacer()
-                tabButton(title: Tab.journey.rawValue, image: "map.fill", tab: .journey)
+                tabButton(title: i18n.journey.localized, image: "map.fill", tab: .journey)
                 Spacer()
-                tabButton(title: Tab.missions.rawValue, image: "transmission", tab: .missions)
+                tabButton(title: i18n.missions.localized, image: "transmission", tab: .missions)
                 Spacer()
             }
             .tag(TabType.user)
 
             HStack {
                 Spacer()
-                tabButton(title: Tab.creator.rawValue, image: "theatermasks.fill", tab: .creator)
+                tabButton(title: i18n.creator.localized, image: "theatermasks.fill", tab: .creator)
                 Spacer()
             }
             .tag(TabType.creator)

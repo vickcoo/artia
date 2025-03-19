@@ -17,18 +17,18 @@ struct EditStoryView: View {
         NavigationStack {
             VStack {
                 Form {
-                    Section("Info") {
-                        TextField("Title", text: $title)
+                    Section(i18n.info.localized) {
+                        TextField(i18n.title.localized, text: $title)
                     }
                     .listRowBackground(Color(.section))
 
-                    Section("Content") {
+                    Section(i18n.content.localized) {
                         TextEditor(text: $content)
                             .frame(minHeight: 100)
                     }
                     .listRowBackground(Color(.section))
 
-                    Section("Missions") {
+                    Section(i18n.missions.localized) {
                         ForEach($story.missions) { $mission in
                             Text(mission.title)
                         }
@@ -44,7 +44,7 @@ struct EditStoryView: View {
 
                 Spacer()
 
-                RichButton(title: "Done", color: .buttonBackground, disabled: false) {
+                RichButton(title: i18n.done.localized, color: .buttonBackground, disabled: false) {
                     var updatedStory = story
                     updatedStory.title = title
                     updatedStory.content = content
@@ -53,11 +53,11 @@ struct EditStoryView: View {
                 }
                 .padding()
             }
-            .navigationTitle("Edit Story")
+            .navigationTitle(i18n.editStory.localized)
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
                 ToolbarItem(placement: .topBarLeading) {
-                    Button("Cancel") {
+                    Button(i18n.cancel.localized) {
                         dismiss()
                     }
                     .foregroundStyle(.black)

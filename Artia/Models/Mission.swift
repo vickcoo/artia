@@ -51,11 +51,11 @@ enum MissionType: String, Codable, Identifiable {
     var text: String {
         switch self {
         case .main:
-            return "Main"
+            return i18n.main.localized
         case .side:
-            return "Side"
+            return i18n.side.localized
         case .repeat:
-            return "Repeat"
+            return i18n.repeat.localized
         }
     }
 
