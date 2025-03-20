@@ -15,7 +15,7 @@ struct CreateMissionView: View {
     @State private var title = ""
     @State private var description = ""
     @State private var selectedMissionType: MissionType = .main
-    @State private var selectedStory: Story?
+    @State var selectedStory: Story?
     @State private var showingStoryPicker = false
 
     // Condition states
@@ -152,8 +152,9 @@ struct SelectStoryView: View {
                     selectedStory = nil
                 }) {
                     Image(systemName: "xmark.circle.fill")
-                        .foregroundColor(.gray)
+                        .foregroundColor(.red)
                 }
+                .buttonStyle(BorderlessButtonStyle())
             }
         } else {
             Button(action: {
@@ -192,9 +193,10 @@ struct ConditionListView: View {
                     Button(action: {
                         conditions.remove(at: index)
                     }) {
-                        Image(systemName: "trash")
+                        Image(systemName: "xmark.circle.fill")
                             .foregroundColor(.red)
                     }
+                    .buttonStyle(BorderlessButtonStyle())
                 }
             } else if let healthCondition = condition as? HealthKitCondition {
                 HStack {
@@ -217,9 +219,10 @@ struct ConditionListView: View {
                     Button(action: {
                         conditions.remove(at: index)
                     }) {
-                        Image(systemName: "trash")
+                        Image(systemName: "xmark.circle.fill")
                             .foregroundColor(.red)
                     }
+                    .buttonStyle(BorderlessButtonStyle())
                 }
             }
         }
@@ -258,9 +261,10 @@ struct RewardListView: View {
                 Button(action: {
                     rewards.remove(at: index)
                 }) {
-                    Image(systemName: "trash")
+                    Image(systemName: "xmark.circle.fill")
                         .foregroundColor(.red)
                 }
+                .buttonStyle(BorderlessButtonStyle())
             }
         }
     }

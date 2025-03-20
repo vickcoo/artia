@@ -6,6 +6,7 @@ struct EditStoryView: View {
     @State private var story: Story
     @State private var title: String
     @State private var content: String
+    @State private var sheetType: EditStoryViewSheetType?
 
     init(story: Story) {
         _story = State(initialValue: story)
@@ -30,7 +31,17 @@ struct EditStoryView: View {
 
                     Section(i18n.missions.localized) {
                         ForEach($story.missions) { $mission in
-                            Text(mission.title)
+                            Button {
+                                sheetType = .editMission(mission: mission)
+                            } label: {
+                                HStack {
+                                    Text(mission.title)
+                                    Spacer()
+                                    Image(systemName: "chevron.right")
+                                        .foregroundColor(.gray)
+                                }
+                                .foregroundStyle(.black)
+                            }
                         }
                         .onMove { indexSet, destination in
                             story.missions.move(fromOffsets: indexSet, toOffset: destination)
@@ -64,7 +75,19 @@ struct EditStoryView: View {
                 }
             }
         }
+        .sheet(item: $sheetType) { sheetType in
+            switch sheetType {
+            case .editMission(let mission):
+                EditMissionView(mission: mission, story: story)
+            }
+            
+        }
     }
+}
+
+enum EditStoryViewSheetType: Identifiable {
+    var id: UUID { UUID() }
+    case editMission(mission: Mission)
 }
 
 #Preview {

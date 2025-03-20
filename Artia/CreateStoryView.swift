@@ -59,7 +59,7 @@ struct CreateStoryView: View {
 
                 Spacer()
 
-                RichButton(title: i18n.add.localized, color: Color.buttonBackground, icon: "sparkle", disabled: title.isEmpty) {
+                RichButton(title: i18n.create.localized, color: Color.buttonBackground, icon: "sparkle", disabled: title.isEmpty) {
                     saveStory()
                 }
                 .padding()
@@ -67,7 +67,10 @@ struct CreateStoryView: View {
         }
     }
 
-    private func deleteMission(at _: IndexSet) {}
+    private func deleteMission(at index: IndexSet) {
+        // remove mission by index
+        missions.remove(atOffsets: index)
+    }
 
     private func saveStory() {
         let story = Story(
@@ -98,6 +101,18 @@ private struct MissionList: View {
                         .font(.caption)
                     Text(mission.title)
                         .font(.headline)
+                    
+                    Spacer()
+                    
+                    Button {
+                        if let index = missions.firstIndex(of: mission) {
+                            deleteMission(IndexSet(integer: index))
+                        }
+                    } label: {
+                        Image(systemName: "x.circle.fill")
+                            .foregroundColor(.red)
+                    }
+                    .buttonStyle(BorderlessButtonStyle())
                 }
 
                 if mission.description.isEmpty == false {

@@ -12,7 +12,33 @@ enum MockData {
         id: UUID(uuidString: "00000000-0000-0000-0000-000000000000")!,
         title: "The Dragon's Menace",
         content: "The fate of the kingdom rests in your hands",
-        missions: []
+        missions: [
+            Mission(
+                title: "Defeat the Dragon King",
+                description: "Venture into the Dragon's Lair and defeat the legendary Dragon King. Required level: 50+",
+                status: .todo,
+                type: .main,
+                conditions: [
+                    ImageCondition(title: "Capture Battle Scene", goal: 3, value: []),
+                ],
+                rewards: [
+                    MissionReward(title: "Dragon's Bane", description: "Legendary sword dropped by Dragon King"),
+                ]
+            ),
+            Mission(
+                title: "Save the Lost Village",
+                description: "Investigate the mysterious disappearances in Shadow Valley and protect the villagers",
+                status: .todo,
+                type: .main,
+                conditions: [
+                    ImageCondition(title: "Evidence Photos", goal: 5, value: []),
+                    HealthKitCondition(healthType: .calories, title: "Physical Monitoring", value: 0, goal: 500),
+                ],
+                rewards: [
+                    MissionReward(title: "Village Elder's Amulet", description: "An ancient protective charm"),
+                ]
+            )
+        ]
     )
     static let stories: [Story] = [
         Story(
