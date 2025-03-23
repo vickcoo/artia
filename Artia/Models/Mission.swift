@@ -39,6 +39,7 @@ extension Mission: Equatable {
 
 enum MissionStatus: String, Codable {
     case todo
+    case doing
     case done
 }
 

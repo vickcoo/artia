@@ -20,6 +20,18 @@ struct MissionsView: View {
             return store.stories.flatMap({ $0.missions })
         }
     }
+    
+    var currentMainMissionFilterByStory: [Mission] {
+        if let selectedStoryId = selectedStoryId {
+            if let mission = store.stories.first(where: { $0.id == selectedStoryId })?.currentMainMissions {
+                return [mission]
+            } else {
+                return []
+            }
+        } else {
+            return store.stories.compactMap({ $0.currentMainMissions  })
+        }
+    }
 
     private var storyChipOptions: [ChipOption] {
         store.stories.map { ChipOption(id: $0.id, title: $0.title) }
@@ -31,26 +43,26 @@ struct MissionsView: View {
 
             ScrollView {
                 LazyVStack(spacing: 16) {
-                    let mainMissions = missionsFilterByStory.filter { $0.type == .main && $0.isUncompleted }
+                    let mainMissions = currentMainMissionFilterByStory
                     let sideMissions = missionsFilterByStory.filter { $0.type == .side && $0.isUncompleted }
                     let repeatMissions = missionsFilterByStory.filter { $0.type == .repeat && $0.isUncompleted }
 
                     if mainMissions.isEmpty == false {
-                        MissionList(title: mainMissions.first?.type.text ?? "-", missions: mainMissions) { mission in
+                        MissionList(title: i18n.main.localized, missions: mainMissions) { mission in
                             showingDetail = true
                             selectedMissionId = mission.id
                         }
                     }
 
                     if sideMissions.isEmpty == false {
-                        MissionList(title: sideMissions.first?.type.text ?? "-", missions: sideMissions) { mission in
+                        MissionList(title: i18n.side.localized, missions: sideMissions) { mission in
                             showingDetail = true
                             selectedMissionId = mission.id
                         }
                     }
 
                     if repeatMissions.isEmpty == false {
-                        MissionList(title: repeatMissions.first?.type.text ?? "-", missions: repeatMissions) { mission in
+                        MissionList(title: i18n.repeat.localized, missions: repeatMissions) { mission in
                             showingDetail = true
                             selectedMissionId = mission.id
                         }

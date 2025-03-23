@@ -16,7 +16,7 @@ enum MockData {
             Mission(
                 title: "Defeat the Dragon King",
                 description: "Venture into the Dragon's Lair and defeat the legendary Dragon King. Required level: 50+",
-                status: .todo,
+                status: .doing,
                 type: .main,
                 conditions: [
                     ImageCondition(title: "Capture Battle Scene", goal: 3, value: []),
@@ -49,7 +49,7 @@ enum MockData {
                 Mission(
                     title: "Defeat the Dragon King",
                     description: "Venture into the Dragon's Lair and defeat the legendary Dragon King. Required level: 50+",
-                    status: .todo,
+                    status: .doing,
                     type: .main,
                     conditions: [
                         ImageCondition(title: "Capture Battle Scene", goal: 3, value: []),
@@ -61,7 +61,7 @@ enum MockData {
                 Mission(
                     title: "Save the Lost Village",
                     description: "Investigate the mysterious disappearances in Shadow Valley and protect the villagers",
-                    status: .todo,
+                    status: .doing,
                     type: .main,
                     conditions: [
                         ImageCondition(title: "Evidence Photos", goal: 5, value: []),
@@ -135,7 +135,7 @@ enum MockData {
     static let mission: Mission = .init(
         title: "Defeat the Dragon King",
         description: "Venture into the Dragon's Lair and defeat the legendary Dragon King. Required level: 50+",
-        status: .todo,
+        status: .doing,
         type: .main,
         conditions: [
             ImageCondition(title: "Capture Battle Scene", goal: 1, value: []),
@@ -149,7 +149,7 @@ enum MockData {
         Mission(
             title: "Defeat the Dragon King",
             description: "Venture into the Dragon's Lair and defeat the legendary Dragon King. Required level: 50+",
-            status: .todo,
+            status: .doing,
             type: .main,
             conditions: [
                 ImageCondition(title: "Capture Battle Scene", goal: 3, value: []),
