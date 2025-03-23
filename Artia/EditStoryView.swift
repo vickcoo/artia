@@ -74,7 +74,7 @@ struct EditStoryView: View {
                 Spacer()
 
                 RichButton(title: i18n.done.localized, color: .buttonBackground, disabled: false) {
-                    var updatedStory = story
+                    let updatedStory = story
                     updatedStory.title = title
                     updatedStory.content = content
                     store.updateStory(updatedStory)
@@ -86,10 +86,12 @@ struct EditStoryView: View {
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
                 ToolbarItem(placement: .topBarLeading) {
-                    Button(i18n.cancel.localized) {
+                    Button {
                         dismiss()
+                    } label: {
+                        Text(i18n.cancel.localized)
+                            .tint(.black)
                     }
-                    .foregroundStyle(.black)
                 }
             }
         }

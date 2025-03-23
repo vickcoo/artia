@@ -270,50 +270,6 @@ struct RewardListView: View {
     }
 }
 
-struct StoryPickerView: View {
-    @EnvironmentObject var store: MissionStore
-    @Binding var selectedStory: Story?
-    let stories: [Story]
-    @Environment(\.dismiss) private var dismiss
-    var completion: (Story) -> Void = {_ in }
-
-    var body: some View {
-        NavigationStack {
-            List {
-                ForEach(store.stories) { story in
-                    Button(action: {
-                        selectedStory = story
-                        completion(story)
-                        dismiss()
-                    }) {
-                        VStack(alignment: .leading) {
-                            Text(story.title)
-                                .font(.headline)
-                            Text(story.content)
-                                .font(.subheadline)
-                                .foregroundColor(.secondary)
-                        }
-                    }
-                    .foregroundColor(.primary)
-                }
-            }
-            .listStyle(PlainListStyle())
-            .scrollContentBackground(.hidden)
-            .background(Color.primaryBackground)
-            .navigationTitle(i18n.selectStory.localized)
-            .navigationBarTitleDisplayMode(.inline)
-            .toolbar {
-                ToolbarItem(placement: .topBarLeading) {
-                    Button(i18n.cancel.localized) {
-                        dismiss()
-                    }
-                    .tint(.black)
-                }
-            }
-        }
-    }
-}
-
 struct AddConditionView: View {
     @Environment(\.dismiss) private var dismiss
     @Binding var conditions: [any MissionCondition]

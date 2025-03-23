@@ -13,8 +13,6 @@ enum CreatorViewSheetType: Identifiable {
     case createStory
     case selectStory
     case selectMission
-    case editMission(_ mission: Mission)
-    case editStory(_ story: Story)
 }
 
 struct CreatorView: View {
@@ -56,20 +54,9 @@ struct CreatorView: View {
                 CreateStoryView()
                     .interactiveDismissDisabled()
             case .selectStory:
-                StoryPickerView(selectedStory: $selectedStory, stories: store.stories) { story in
-                    showSheet(.editStory(story))
-                }
-                .presentationDetents([.medium])
-            case let .editStory(story):
-                EditStoryView(story: story)
+                StoryPickerView(selectedStory: $selectedStory, stories: store.stories)
             case .selectMission:
-                MissionPickerView(selectedMission: $selectedMission) { mission in
-                    showSheet(.editMission(mission))
-                }
-            case let .editMission(mission):
-                if let story = store.getStory(by: mission) {
-                    EditMissionView(mission: mission, story: story)
-                }
+                MissionPickerView(selectedMission: $selectedMission)
             }
         }
     }

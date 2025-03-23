@@ -88,10 +88,12 @@ struct EditMissionView: View {
                 .navigationBarTitleDisplayMode(.inline)
                 .toolbar {
                     ToolbarItem(placement: .topBarLeading) {
-                        Button(i18n.cancel.localized) {
+                        Button {
                             dismiss()
+                        } label: {
+                            Text(i18n.cancel.localized)
+                                .tint(.black)
                         }
-                        .tint(.black)
                     }
                 }
 
