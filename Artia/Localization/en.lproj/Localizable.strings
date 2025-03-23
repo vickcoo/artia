@@ -26,6 +26,7 @@
 "noMissionInThisStory" = "No Mission for this Story";
 
 /* MARK: - Mission Related */
+"takeMission" = "Take Mission";
 "editMission" = "Edit Mission";
 "addMission" = "Add Mission";
 "addCondition" = "Add Condition";
@@ -37,6 +38,7 @@
 "mainMission" = "Main Mission";
 "sideMission" = "Side Mission";
 "repeatMission" = "Repeat Mission";
+"newMissionAvailable" = "New Missions Available";
 
 /* MARK: - Mission Types */
 "missionType" = "Mission Type";

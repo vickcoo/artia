@@ -39,6 +39,7 @@ enum i18n: String {
 
     // MARK: - Mission Related
 
+    case takeMission
     case editMission
     case addMission
     case addCondition
@@ -50,6 +51,7 @@ enum i18n: String {
     case mainMission
     case sideMission
     case repeatMission
+    case newMissionAvailable
 
     // MARK: - Mission Types
 

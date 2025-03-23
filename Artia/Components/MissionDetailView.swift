@@ -12,28 +12,7 @@ struct MissionDetailView: View {
         VStack {
             ScrollView {
                 VStack(alignment: .center, spacing: 20) {
-                    Text(mission.type.text)
-                        .font(.caption)
-                        .foregroundColor(.white)
-                        .padding(.horizontal, 12)
-                        .padding(.vertical, 6)
-                        .background(Color.black)
-                        .clipShape(Capsule())
-
-                    Text(mission.title)
-                        .font(.title)
-
-                    Text(mission.description.isEmpty ? "-" : mission.description)
-                        .foregroundColor(.secondary)
-
-                    if let story = store.getStory(by: mission) {
-                        HStack {
-                            Image(systemName: "person.fill.turn.right")
-                            Text(story.title)
-                                .font(.subheadline)
-                                .fontWeight(.medium)
-                        }
-                    }
+                    MissionInfoView(mission: mission, story: store.getStory(by: mission))
 
                     Divider()
 
@@ -63,6 +42,36 @@ struct MissionDetailView: View {
         .background(Color(.primaryBackground))
         .onAppear {
             tempWalkaroundIsCompleted = mission.canCompleted
+        }
+    }
+}
+
+private struct MissionInfoView: View {
+    let mission: Mission
+    let story: Story?
+
+    var body: some View {
+        Text(mission.type.text)
+            .font(.caption)
+            .foregroundColor(.white)
+            .padding(.horizontal, 12)
+            .padding(.vertical, 6)
+            .background(Color.black)
+            .clipShape(Capsule())
+
+        Text(mission.title)
+            .font(.title)
+
+        Text(mission.description.isEmpty ? "-" : mission.description)
+            .foregroundColor(.secondary)
+
+        if let story {
+            HStack {
+                Image(systemName: "person.fill.turn.right")
+                Text(story.title)
+                    .font(.subheadline)
+                    .fontWeight(.medium)
+            }
         }
     }
 }

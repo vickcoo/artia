@@ -13,11 +13,28 @@ class Story: Identifiable, Equatable, ObservableObject {
     var content: String
 
     @Published var missions: [Mission] = []
-    
+
     var currentMainMissions: Mission? {
         missions.first {
             $0.type == .main
-            && $0.status == .doing
+                && $0.status == .doing
+        }
+    }
+
+    var nextMainMission: Mission? {
+        missions.first {
+            $0.type == .main
+                && $0.status == .todo
+        }
+    }
+
+    var todoMissions: [Mission] {
+        if currentMainMissions == nil {
+            let mainMission = nextMainMission
+            let otherMissions = missions.filter { $0.type != .main && $0.status == .todo }
+            return [mainMission].compactMap { $0 } + otherMissions
+        } else {
+            return missions.filter { $0.type != .main }
         }
     }
 
@@ -40,11 +57,11 @@ class Story: Identifiable, Equatable, ObservableObject {
     func addMission(_ mission: Mission) {
         missions.append(mission)
     }
-    
+
     func moveMission(from source: IndexSet, to destination: Int) {
-        print("\(missions.map({$0.title}))")
+        print("\(missions.map { $0.title })")
         missions.move(fromOffsets: source, toOffset: destination)
-        print("\(missions.map({$0.title}))")
+        print("\(missions.map { $0.title })")
     }
 }
 

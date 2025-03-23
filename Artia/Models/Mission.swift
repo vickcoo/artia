@@ -20,6 +20,8 @@ final class Mission: Identifiable, ObservableObject {
         self.rewards = rewards
     }
 
+    func take() { status = .doing }
+
     func finish() { status = .done }
 
     var isCompleted: Bool { status == .done }

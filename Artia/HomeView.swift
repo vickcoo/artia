@@ -31,8 +31,9 @@ struct HomeView: View {
 
     @State var selectedTabType: TabType = .user
     @State var selectedTab: Tab = .missions
+    
+    @State private var missionsSheetType: MissionsSheetType? = nil
 
-    @State private var showingDetail = false
     @State private var selectedMissionId: UUID?
 
     var body: some View {
@@ -46,7 +47,7 @@ struct HomeView: View {
                 JourneyView()
                     .tag(Tab.journey)
 
-                MissionsView(showingDetail: $showingDetail, selectedMissionId: $selectedMissionId)
+                MissionsView(selectedMissionId: $selectedMissionId)
                     .tag(Tab.missions)
 
                 CreatorView()
@@ -79,12 +80,6 @@ struct HomeView: View {
                 .ignoresSafeArea()
         )
         .ignoresSafeArea(.all, edges: .bottom)
-        .onChange(of: showingDetail) { /* Don't remove this, this can keep showing mission detail work. */ }
-        .sheet(isPresented: $showingDetail) {
-            if let mission = store.getMission(by: selectedMissionId) {
-                MissionDetailView(mission: mission)
-            }
-        }
     }
 }
 

@@ -26,6 +26,7 @@
 "noMissionInThisStory" = "這個故事中沒有任務";
 
 /* MARK: - Mission Related */
+"takeMission" = "接受任務";
 "editMission" = "編輯任務";
 "addMission" = "新增任務";
 "addCondition" = "新增條件";
@@ -37,6 +38,7 @@
 "mainMission" = "主線任務";
 "sideMission" = "支線任務";
 "repeatMission" = "重複任務";
+"newMissionAvailable" = "新任務可接取";
 
 /* MARK: - Mission Types */
 "missionType" = "任務類型";

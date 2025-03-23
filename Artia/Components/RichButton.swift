@@ -11,7 +11,7 @@ struct RichButton: View {
     let title: String
     let color: Color
     var icon: String? = nil
-    let disabled: Bool
+    var disabled: Bool = false
     let action: () -> Void
     @State private var size: CGSize = .zero
 

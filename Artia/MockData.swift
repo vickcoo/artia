@@ -49,7 +49,7 @@ enum MockData {
                 Mission(
                     title: "Defeat the Dragon King",
                     description: "Venture into the Dragon's Lair and defeat the legendary Dragon King. Required level: 50+",
-                    status: .doing,
+                    status: .todo,
                     type: .main,
                     conditions: [
                         ImageCondition(title: "Capture Battle Scene", goal: 3, value: []),
