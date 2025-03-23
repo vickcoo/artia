@@ -52,9 +52,11 @@ struct CreateStoryView: View {
                     }
                 }
                 .sheet(isPresented: $showingAddMission) {
-                    StoryCreateMissionView(showingAddMission: $showingAddMission, missions: $missions)
-                        .presentationDetents([.medium])
-                        .interactiveDismissDisabled()
+                    StoryCreateMissionView(missions: $missions) {
+                        showingAddMission = false
+                    }
+                    .presentationDetents([.medium])
+                    .interactiveDismissDisabled()
                 }
 
                 Spacer()
@@ -101,9 +103,9 @@ private struct MissionList: View {
                         .font(.caption)
                     Text(mission.title)
                         .font(.headline)
-                    
+
                     Spacer()
-                    
+
                     Button {
                         if let index = missions.firstIndex(of: mission) {
                             deleteMission(IndexSet(integer: index))
@@ -127,12 +129,14 @@ private struct MissionList: View {
     }
 }
 
-private struct StoryCreateMissionView: View {
+struct StoryCreateMissionView: View {
+    @Environment(\.dismiss) private var dismiss
+
     @State private var newMissionTitle = ""
     @State private var newMissionDescription = ""
     @State private var selectedMissionType: MissionType = .main
-    @Binding var showingAddMission: Bool
     @Binding var missions: [Mission]
+    var completion: () -> Void = {}
 
     var body: some View {
         NavigationStack {
@@ -163,7 +167,7 @@ private struct StoryCreateMissionView: View {
                 .toolbar {
                     ToolbarItem(placement: .topBarLeading) {
                         Button(i18n.cancel.localized) {
-                            showingAddMission = false
+                            dismiss()
                         }
                         .tint(.black)
                     }
@@ -173,7 +177,8 @@ private struct StoryCreateMissionView: View {
 
                 RichButton(title: i18n.add.localized, color: Color.buttonBackground, icon: "sparkle", disabled: newMissionTitle.isEmpty) {
                     addMission()
-                    showingAddMission = false
+                    completion()
+                    dismiss()
                 }
                 .padding()
             }
@@ -203,5 +208,5 @@ private struct StoryCreateMissionView: View {
 }
 
 #Preview("StoryCreateMissionView") {
-    StoryCreateMissionView(showingAddMission: .constant(true), missions: .constant([]))
+    StoryCreateMissionView(missions: .constant([]))
 }

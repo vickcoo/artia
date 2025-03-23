@@ -5,7 +5,7 @@ final class Mission: Identifiable, ObservableObject {
     let id: UUID
     let title: String
     let description: String
-    @Published var status: MissionStatus
+    @Published var status: MissionStatus = .todo
     let type: MissionType
     @Published var conditions: [any MissionCondition]
     let rewards: [MissionReward]

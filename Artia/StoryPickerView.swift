@@ -8,7 +8,6 @@
 import SwiftUI
 
 struct StoryPickerView: View {
-    @EnvironmentObject var store: MissionStore
     @Binding var selectedStory: Story?
     let stories: [Story]
     @Environment(\.dismiss) private var dismiss
@@ -17,7 +16,7 @@ struct StoryPickerView: View {
     var body: some View {
         NavigationStack {
             List {
-                ForEach(store.stories) { story in
+                ForEach(stories) { story in
                     NavigationLink {
                         EditStoryView(story: story) {
                             completion()

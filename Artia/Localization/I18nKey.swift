@@ -35,7 +35,7 @@ enum i18n: String {
     case select
 
     case noMission
-    case NoMissionInThisStory
+    case noMissionInThisStory
 
     // MARK: - Mission Related
 

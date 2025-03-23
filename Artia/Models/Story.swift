@@ -34,7 +34,7 @@ class Story: Identifiable, Equatable, ObservableObject {
             let otherMissions = missions.filter { $0.type != .main && $0.status == .todo }
             return [mainMission].compactMap { $0 } + otherMissions
         } else {
-            return missions.filter { $0.type != .main }
+            return missions.filter { $0.type != .main && $0.status == .todo }
         }
     }
 

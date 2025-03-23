@@ -4,17 +4,19 @@ struct EditStoryView: View {
     @Environment(\.dismiss) private var dismiss
     @Environment(\.editMode) private var editMode
     @EnvironmentObject private var store: MissionStore
-    @ObservedObject private var story: Story
+    @State private var story: Story
     @State private var title: String
     @State private var content: String
     @State private var sheetType: EditStoryViewSheetType?
-    var completion: () -> Void = { }
-    
-    init(story: Story, completion: @escaping () -> Void = { }) {
+    @State private var missions: [Mission]
+    var completion: () -> Void = {}
+
+    init(story: Story, completion: @escaping () -> Void = {}) {
         self.story = story
         title = story.title
         content = story.content
         sheetType = nil
+        missions = story.missions
         self.completion = completion
     }
 
@@ -34,7 +36,14 @@ struct EditStoryView: View {
                     .listRowBackground(Color(.section))
 
                     Section {
-                        MissionListView(story: story, sheetType: $sheetType)
+                        MissionList(missions: $missions, story: $story)
+
+                        Button(action: {
+                            sheetType = .addMission
+                        }) {
+                            Label(i18n.addMission.localized, systemImage: "plus.circle")
+                                .foregroundStyle(.black)
+                        }
                     } header: {
                         HStack {
                             Text(i18n.missions.localized)
@@ -58,6 +67,7 @@ struct EditStoryView: View {
                     let updatedStory = story
                     updatedStory.title = title
                     updatedStory.content = content
+                    updatedStory.missions = missions
                     store.updateStory(updatedStory)
                     completion()
                 }
@@ -78,39 +88,48 @@ struct EditStoryView: View {
         }
         .sheet(item: $sheetType) { sheetType in
             switch sheetType {
-            case let .editMission(mission):
-                EditMissionView(mission: mission, story: story)
+            // case let .editMission(mission):
+            //     EditMissionView(mission: mission, story: story)
+            case .addMission:
+                StoryCreateMissionView(missions: $missions)
+                    .presentationDetents([.medium])
+                    .interactiveDismissDisabled()
             }
         }
     }
 }
 
-private struct MissionListView: View {
+private struct MissionList: View {
     @Environment(\.editMode) private var editMode
-    @ObservedObject var story: Story
-    @Binding var sheetType: EditStoryViewSheetType?
-    
+    @Binding var missions: [Mission]
+    @Binding var story: Story
+
     var body: some View {
         List {
-            ForEach($story.missions, id: \.id) { $mission in
-                Button {
-                    if editMode?.wrappedValue.isEditing == false {
-                        sheetType = .editMission(mission: mission)
-                    }
+            ForEach($missions, id: \.id) { $mission in
+                NavigationLink {
+                    EditMissionView(mission: mission, story: story)
+                        .navigationBarBackButtonHidden()
                 } label: {
                     HStack {
+                        Text(mission.type.text)
+                            .font(.caption)
+                            .foregroundColor(.white)
+                            .padding(.horizontal, 12)
+                            .padding(.vertical, 6)
+                            .background(Color.black)
+                            .clipShape(Capsule())
+
                         Text(mission.title)
-                        Spacer()
-                        if editMode?.wrappedValue.isEditing == false {
-                            Image(systemName: "chevron.right")
-                                .foregroundColor(.gray)
-                        }
                     }
                     .foregroundStyle(.black)
                 }
             }
             .onMove { indexSet, destination in
-                story.missions.move(fromOffsets: indexSet, toOffset: destination)
+                missions.move(fromOffsets: indexSet, toOffset: destination)
+            }
+            .onDelete { indexSet in
+                missions.remove(atOffsets: indexSet)
             }
         }
     }
@@ -118,7 +137,7 @@ private struct MissionListView: View {
 
 enum EditStoryViewSheetType: Identifiable {
     var id: UUID { UUID() }
-    case editMission(mission: Mission)
+    case addMission
 }
 
 #Preview {

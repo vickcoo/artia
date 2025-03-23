@@ -55,7 +55,7 @@ struct CreatorView: View {
                 CreateStoryView()
                     .interactiveDismissDisabled()
             case .selectStory:
-                StoryPickerView(selectedStory: $selectedStory, stories: store.stories) {
+                StoryPickerView(selectedStory: $selectedStory, stories: store.stories.map({$0.copy()})) {
                     sheetType = nil
                     dismiss()
                 }

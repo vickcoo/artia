@@ -30,10 +30,10 @@ struct MissionsView: View {
                         $0.type == .main && $0.status == .doing
                     }
                     let sideMissions = missionsFilterByStory.filter {
-                        $0.type == .side && $0.status == .doing
+                        $0.type == .side
                     }
                     let repeatMissions = missionsFilterByStory.filter {
-                        $0.type == .repeat && $0.status == .doing
+                        $0.type == .repeat
                     }
 
                     if nextMainMissions.isEmpty == false {
@@ -65,14 +65,14 @@ struct MissionsView: View {
                         }
                     }
 
-                    if missionsFilterByStory.isEmpty {
+                    if hasAnyMissionAvailable == false {
                         VStack(spacing: 20) {
                             Image(systemName: "tray")
                                 .font(.system(size: 50))
                                 .foregroundColor(.gray)
 
                             if selectedStoryId != nil {
-                                Text(i18n.NoMissionInThisStory.localized)
+                                Text(i18n.noMissionInThisStory.localized)
                                     .font(.headline)
                                     .foregroundColor(.gray)
                             } else {
@@ -101,10 +101,29 @@ struct MissionsView: View {
 
     var missionsFilterByStory: [Mission] {
         if let selectedStoryId = selectedStoryId {
-            return store.stories.first { $0.id == selectedStoryId }?.missions ?? []
+            return store.stories
+                .first { $0.id == selectedStoryId }?.missions
+                .filter({  $0.status == .doing })
+                ?? []
         } else {
             return store.stories.flatMap { $0.missions }
+                .filter({ $0.status == .doing })
         }
+    }
+    
+    var hasAnyMissionAvailable: Bool {
+        var missions: [Mission] = []
+        if let selectedStoryId = selectedStoryId {
+            missions = store.stories
+                .first { $0.id == selectedStoryId }?.missions
+                .filter({ $0.status == .doing || $0.status == .todo })
+                ?? []
+        } else {
+            missions = store.stories.flatMap { $0.missions }
+                .filter({ $0.status == .doing || $0.status == .todo })
+        }
+        
+        return missions.isEmpty == false
     }
 
     var currentMainMissionFilterByStory: [Mission] {
