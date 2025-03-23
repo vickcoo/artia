@@ -12,15 +12,17 @@ struct StoryPickerView: View {
     @Binding var selectedStory: Story?
     let stories: [Story]
     @Environment(\.dismiss) private var dismiss
-    var completion: (Story) -> Void = {_ in }
+    var completion: () -> Void = { }
 
     var body: some View {
         NavigationStack {
             List {
                 ForEach(store.stories) { story in
                     NavigationLink {
-                        EditStoryView(story: story)
-                            .navigationBarBackButtonHidden()
+                        EditStoryView(story: story) {
+                            completion()
+                        }
+                        .navigationBarBackButtonHidden()
                     } label: {
                         VStack(alignment: .leading) {
                             Text(story.title)

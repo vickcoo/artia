@@ -8,12 +8,14 @@ struct EditStoryView: View {
     @State private var title: String
     @State private var content: String
     @State private var sheetType: EditStoryViewSheetType?
-
-    init(story: Story) {
+    var completion: () -> Void = { }
+    
+    init(story: Story, completion: @escaping () -> Void = { }) {
         self.story = story
         title = story.title
         content = story.content
         sheetType = nil
+        self.completion = completion
     }
 
     var body: some View {
@@ -32,28 +34,7 @@ struct EditStoryView: View {
                     .listRowBackground(Color(.section))
 
                     Section {
-                        List {
-                            ForEach($story.missions, id: \.id) { $mission in
-                                Button {
-                                    if editMode?.wrappedValue.isEditing == false {
-                                        sheetType = .editMission(mission: mission)
-                                    }
-                                } label: {
-                                    HStack {
-                                        Text(mission.title)
-                                        Spacer()
-                                        if editMode?.wrappedValue.isEditing == false {
-                                            Image(systemName: "chevron.right")
-                                                .foregroundColor(.gray)
-                                        }
-                                    }
-                                    .foregroundStyle(.black)
-                                }
-                            }
-                            .onMove { indexSet, destination in
-                                story.missions.move(fromOffsets: indexSet, toOffset: destination)
-                            }
-                        }
+                        MissionListView(story: story, sheetType: $sheetType)
                     } header: {
                         HStack {
                             Text(i18n.missions.localized)
@@ -78,7 +59,7 @@ struct EditStoryView: View {
                     updatedStory.title = title
                     updatedStory.content = content
                     store.updateStory(updatedStory)
-                    dismiss()
+                    completion()
                 }
                 .padding()
             }
@@ -99,6 +80,37 @@ struct EditStoryView: View {
             switch sheetType {
             case let .editMission(mission):
                 EditMissionView(mission: mission, story: story)
+            }
+        }
+    }
+}
+
+private struct MissionListView: View {
+    @Environment(\.editMode) private var editMode
+    @ObservedObject var story: Story
+    @Binding var sheetType: EditStoryViewSheetType?
+    
+    var body: some View {
+        List {
+            ForEach($story.missions, id: \.id) { $mission in
+                Button {
+                    if editMode?.wrappedValue.isEditing == false {
+                        sheetType = .editMission(mission: mission)
+                    }
+                } label: {
+                    HStack {
+                        Text(mission.title)
+                        Spacer()
+                        if editMode?.wrappedValue.isEditing == false {
+                            Image(systemName: "chevron.right")
+                                .foregroundColor(.gray)
+                        }
+                    }
+                    .foregroundStyle(.black)
+                }
+            }
+            .onMove { indexSet, destination in
+                story.missions.move(fromOffsets: indexSet, toOffset: destination)
             }
         }
     }

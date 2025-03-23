@@ -17,6 +17,7 @@ enum CreatorViewSheetType: Identifiable {
 
 struct CreatorView: View {
     @EnvironmentObject private var store: MissionStore
+    @Environment(\.dismiss) private var dismiss
     @State private var selectedStory: Story?
     @State private var sheetType: CreatorViewSheetType?
     @State private var selectedMission: Mission?
@@ -54,9 +55,15 @@ struct CreatorView: View {
                 CreateStoryView()
                     .interactiveDismissDisabled()
             case .selectStory:
-                StoryPickerView(selectedStory: $selectedStory, stories: store.stories)
+                StoryPickerView(selectedStory: $selectedStory, stories: store.stories) {
+                    sheetType = nil
+                    dismiss()
+                }
             case .selectMission:
-                MissionPickerView(selectedMission: $selectedMission)
+                MissionPickerView(selectedMission: $selectedMission) { 
+                    sheetType = nil
+                    dismiss()
+                }
             }
         }
     }

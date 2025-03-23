@@ -21,7 +21,9 @@ struct EditMissionView: View {
     @State private var rewards: [MissionReward]
     @State private var showingAddReward = false
 
-    init(mission: Mission, story: Story) {
+    var completion: () -> Void = { }
+    
+    init(mission: Mission, story: Story, completion: @escaping () -> Void = { }) {
         self.mission = mission
 
         _title = State(initialValue: mission.title)
@@ -30,6 +32,7 @@ struct EditMissionView: View {
         _conditions = State(initialValue: mission.conditions)
         _rewards = State(initialValue: mission.rewards)
         _selectedStory = State(initialValue: story)
+        self.completion = completion
     }
 
     var body: some View {
@@ -101,6 +104,7 @@ struct EditMissionView: View {
 
                 RichButton(title: i18n.save.localized, color: Color.buttonBackground, icon: "sparkle", disabled: title.isEmpty) {
                     saveMission()
+                    completion()
                 }
                 .padding()
             }
@@ -134,7 +138,6 @@ struct EditMissionView: View {
         )
 
         missionStore.updateMission(mission: updatedMission, in: selectedStory)
-        dismiss()
     }
 }
 

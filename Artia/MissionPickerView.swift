@@ -13,7 +13,8 @@ struct MissionPickerView: View {
     @Binding var selectedMission: Mission?
     @State private var filteredStory: Story?
     @State private var filteredMissionType: MissionType?
-
+    var completion: () -> Void = { }
+    
     private var storyDropdownOptions: [DropdownChipOption<Story>] {
         store.stories.map { story in
             DropdownChipOption(id: story.id, title: story.title, value: story)
@@ -65,7 +66,9 @@ struct MissionPickerView: View {
                 List {
                     ForEach(filteredMissions) { mission in
                         NavigationLink {
-                            EditMissionView(mission: mission, story: store.getStory(by: mission)!)
+                            EditMissionView(mission: mission, story: store.getStory(by: mission)!) {
+                                completion()
+                            }
                                 .navigationBarBackButtonHidden()
                         } label: {
                             VStack(alignment: .leading) {
