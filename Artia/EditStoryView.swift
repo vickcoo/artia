@@ -2,16 +2,18 @@ import SwiftUI
 
 struct EditStoryView: View {
     @Environment(\.dismiss) private var dismiss
+    @Environment(\.editMode) private var editMode
     @EnvironmentObject private var store: MissionStore
-    @State private var story: Story
+    @ObservedObject private var story: Story
     @State private var title: String
     @State private var content: String
     @State private var sheetType: EditStoryViewSheetType?
 
     init(story: Story) {
-        _story = State(initialValue: story)
-        _title = State(initialValue: story.title)
-        _content = State(initialValue: story.content)
+        self.story = story
+        title = story.title
+        content = story.content
+        sheetType = nil
     }
 
     var body: some View {
@@ -29,22 +31,38 @@ struct EditStoryView: View {
                     }
                     .listRowBackground(Color(.section))
 
-                    Section(i18n.missions.localized) {
-                        ForEach($story.missions) { $mission in
-                            Button {
-                                sheetType = .editMission(mission: mission)
-                            } label: {
-                                HStack {
-                                    Text(mission.title)
-                                    Spacer()
-                                    Image(systemName: "chevron.right")
-                                        .foregroundColor(.gray)
+                    Section {
+                        List {
+                            ForEach($story.missions, id: \.id) { $mission in
+                                Button {
+                                    if editMode?.wrappedValue.isEditing == false {
+                                        sheetType = .editMission(mission: mission)
+                                    }
+                                } label: {
+                                    HStack {
+                                        Text(mission.title)
+                                        Spacer()
+                                        if editMode?.wrappedValue.isEditing == false {
+                                            Image(systemName: "chevron.right")
+                                                .foregroundColor(.gray)
+                                        }
+                                    }
+                                    .foregroundStyle(.black)
                                 }
-                                .foregroundStyle(.black)
+                            }
+                            .onMove { indexSet, destination in
+                                story.missions.move(fromOffsets: indexSet, toOffset: destination)
                             }
                         }
-                        .onMove { indexSet, destination in
-                            story.missions.move(fromOffsets: indexSet, toOffset: destination)
+                    } header: {
+                        HStack {
+                            Text(i18n.missions.localized)
+
+                            Spacer()
+
+                            EditButton()
+                                .foregroundStyle(.black)
+                                .font(.footnote)
                         }
                     }
                     .listRowBackground(Color(.section))
@@ -77,10 +95,9 @@ struct EditStoryView: View {
         }
         .sheet(item: $sheetType) { sheetType in
             switch sheetType {
-            case .editMission(let mission):
+            case let .editMission(mission):
                 EditMissionView(mission: mission, story: story)
             }
-            
         }
     }
 }
