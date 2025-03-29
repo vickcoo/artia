@@ -10,7 +10,9 @@ final class Mission: Identifiable, ObservableObject {
     @Published var conditions: [any MissionCondition]
     let rewards: [MissionReward]
 
-    init(id: UUID = UUID(), title: String, description: String, status: MissionStatus, type: MissionType, conditions: [any MissionCondition], rewards: [MissionReward]) {
+    @Published var takenDate: Date?
+
+    init(id: UUID = UUID(), title: String, description: String, status: MissionStatus, type: MissionType, conditions: [any MissionCondition], rewards: [MissionReward], takenDate: Date? = nil) {
         self.id = id
         self.title = title
         self.description = description
@@ -18,9 +20,13 @@ final class Mission: Identifiable, ObservableObject {
         self.type = type
         self.conditions = conditions
         self.rewards = rewards
+        self.takenDate = takenDate
     }
 
-    func take() { status = .doing }
+    func take() {
+        status = .doing
+        takenDate = Date()
+    }
 
     func finish() { status = .done }
 

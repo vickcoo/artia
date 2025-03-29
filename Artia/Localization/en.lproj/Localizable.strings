@@ -79,6 +79,9 @@
 /* MARK: - Format Strings */
 "itemAt" = "Item at %@";
 
+/* MARK: - Log */
+"failedToGetHealthData" = "Failed to get health data: %@";
+
 /* Common */
 "Item at %@" = "Item at %@";
 "Back" = "Back";

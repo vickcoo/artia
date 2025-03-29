@@ -77,4 +77,7 @@
 "restartAppNotice" = "您可能需要重新啟動應用程式，使所有更改生效";
 
 /* MARK: - Format Strings */
-"itemAt" = "項目於 %@"; 
+"itemAt" = "項目於 %@";
+
+/* MARK: - Log */
+"failedToGetHealthData" = "Failed to get health data: %@";

@@ -23,7 +23,8 @@ enum MockData {
                 ],
                 rewards: [
                     MissionReward(title: "Dragon's Bane", description: "Legendary sword dropped by Dragon King"),
-                ]
+                ],
+                takenDate: Calendar.current.startOfDay()
             ),
             Mission(
                 title: "Save the Lost Village",
@@ -66,10 +67,12 @@ enum MockData {
                     conditions: [
                         ImageCondition(title: "Evidence Photos", goal: 5, value: []),
                         HealthKitCondition(healthType: .calories, title: "Physical Monitoring", value: 0, goal: 500),
+                        HealthKitCondition(healthType: .steps, title: "Protect Villager go to Cave", value: 0, goal: 250),
                     ],
                     rewards: [
                         MissionReward(title: "Village Elder's Amulet", description: "An ancient protective charm"),
-                    ]
+                    ],
+                    takenDate: Calendar.current.startOfDay()
                 )
             ]
         ),
@@ -142,7 +145,8 @@ enum MockData {
         ],
         rewards: [
             MissionReward(title: "Dragon's Bane", description: "Legendary sword dropped by Dragon King"),
-        ]
+        ],
+        takenDate: Calendar.current.startOfDay()
     )
 
     static let missions: [Mission] = [
@@ -156,7 +160,8 @@ enum MockData {
             ],
             rewards: [
                 MissionReward(title: "Dragon's Bane", description: "Legendary sword dropped by Dragon King"),
-            ]
+            ],
+            takenDate: Calendar.current.startOfDay()
         ),
         Mission(
             title: "Collect 10 Magic Crystals",

@@ -98,6 +98,10 @@ enum i18n: String {
     // MARK: - Format Strings
 
     case itemAt
+    
+    // MARK: - Log
+    
+    case failedToGetHealthData
 
     var localized: String {
         return rawValue.localized

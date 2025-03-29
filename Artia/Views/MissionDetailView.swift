@@ -4,6 +4,7 @@ struct MissionDetailView: View {
     @EnvironmentObject private var store: MissionStore
     @Environment(\.dismiss) private var dismiss
     @ObservedObject var mission: Mission
+    @StateObject var viewModel: MissionDetailViewModel = .init()
 
     // FIXME: This is a temporary workaround to update the UI when the mission is completed.
     @State private var tempWalkaroundIsCompleted: Bool = false
@@ -23,6 +24,15 @@ struct MissionDetailView: View {
 
                     ConditionView(mission: mission, onConditionUpdate: {
                         tempWalkaroundIsCompleted = mission.canCompleted
+                    }, getHealthDataValue: { mission, healthType in
+                        guard let startDate = mission.takenDate else {
+                            fatalError("Mission date is not set.")
+                        }
+                        return await viewModel.getHealthData(
+                            by: healthType,
+                            startDate: startDate,
+                            endDate: Calendar.current.endOfDay()
+                        )
                     })
 
                     Spacer()
@@ -98,6 +108,7 @@ private struct RewardView: View {
 private struct ConditionView: View {
     @ObservedObject var mission: Mission
     var onConditionUpdate: () -> Void
+    var getHealthDataValue: (_ mission: Mission, _ healthType: HealthKitConditionType) async throws -> Double
 
     var body: some View {
         ForEach(mission.conditions.indices) { index in
@@ -105,7 +116,9 @@ private struct ConditionView: View {
             case let imageCondition as ImageCondition:
                 ImagesConditionView(condition: imageCondition, onUpdate: onConditionUpdate)
             case let healthCondition as HealthKitCondition:
-                HealthKitConditionView(condition: healthCondition, onUpdate: onConditionUpdate)
+                HealthKitConditionView(condition: healthCondition, mission: mission, onUpdate: onConditionUpdate) {
+                    try await getHealthDataValue(mission, healthCondition.healthType)
+                }
             default:
                 Spacer()
             }
@@ -147,12 +160,14 @@ private struct ImagesConditionView: View {
 
 private struct HealthKitConditionView: View {
     @ObservedObject var condition: HealthKitCondition
+    @ObservedObject var mission: Mission
     var onUpdate: () -> Void
+    var getHealthDataValue: () async throws -> Double
 
     var body: some View {
         VStack(alignment: .leading) {
             HStack {
-                Text(i18n.health.localized)
+                Text(condition.title)
                     .font(.headline)
                 if condition.isCompleted() {
                     Image(systemName: "checkmark.circle.fill")
@@ -161,7 +176,7 @@ private struct HealthKitConditionView: View {
             }
             Spacer(minLength: 10)
             HStack(alignment: .bottom) {
-                ProgressView(i18n.steps.localized, value: condition.value)
+                ProgressView(healthTypeString(condition.healthType), value: condition.value / condition.goal, total: 1)
                     .tint(.repeatTaskGreen)
                 Text("\(Int(condition.value))/\(Int(condition.goal))")
                     .font(.subheadline)
@@ -171,6 +186,24 @@ private struct HealthKitConditionView: View {
         .padding()
         .onChange(of: condition.value) { _, _ in
             onUpdate()
+        }
+        .onAppear {
+            Task {
+                Task {
+                    condition.value = try await getHealthDataValue()
+                }
+            }
+        }
+    }
+
+    private func healthTypeString(_ type: HealthKitConditionType) -> String {
+        switch type {
+        case .calories:
+            return i18n.calories.localized
+        case .steps:
+            return i18n.steps.localized
+        case .water:
+            return i18n.water.localized
         }
     }
 }

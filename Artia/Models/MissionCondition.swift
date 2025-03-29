@@ -113,7 +113,7 @@ class HealthKitCondition: MissionCondition, ObservableObject {
     var id = UUID()
     let healthType: HealthKitConditionType
     var title: String
-    var value: Double
+    @Published var value: Double
     var goal: Double
 
     init(healthType: HealthKitConditionType, title: String, value: Double, goal: Double) {
