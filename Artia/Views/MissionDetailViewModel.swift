@@ -9,25 +9,25 @@ import Foundation
 import OSLog
 
 class MissionDetailViewModel: ObservableObject {
-    var healthManager: HealthManager = .init()
+    var healthService: HealthService = .init()
 
     func getHealthData(by type: HealthKitConditionType, startDate: Date, endDate: Date) async -> Double {
         do {
             switch type {
             case .steps:
-                let steps = try await healthManager.fetchSteps(
+                let steps = try await healthService.fetchSteps(
                     from: startDate,
                     to: endDate
                 )
                 return Double(steps)
             case .calories:
-                let calories = try await healthManager.fetchCalories(
+                let calories = try await healthService.fetchCalories(
                     from: startDate,
                     to: endDate
                 )
                 return Double(calories)
             case .water:
-                let water = try await healthManager.fetchWaterIntake(
+                let water = try await healthService.fetchWaterIntake(
                     from: startDate,
                     to: endDate
                 )

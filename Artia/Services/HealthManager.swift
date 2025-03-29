@@ -8,7 +8,7 @@
 import Foundation
 import HealthKit
 
-class HealthManager: ObservableObject {
+class HealthService: ObservableObject {
     private let healthStore = HKHealthStore()
 
     func requestHealthKitAuthorization() async throws {
