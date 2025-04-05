@@ -9,36 +9,27 @@ import PhotosUI
 import SwiftUI
 
 struct CreateMissionView: View {
-    @EnvironmentObject var missionStore: MissionStore
+    @EnvironmentObject var store: MissionStore
     @Environment(\.dismiss) private var dismiss
+    @StateObject private var viewModel: CreateMissionViewModel
 
-    @State private var title = ""
-    @State private var description = ""
-    @State private var selectedMissionType: MissionType = .main
-    @State var selectedStory: Story?
-    @State private var showingStoryPicker = false
-
-    // Condition states
-    @State private var conditions: [any MissionCondition] = []
-    @State private var showingAddCondition = false
-
-    // Reward states
-    @State private var rewards: [MissionReward] = []
-    @State private var showingAddReward = false
+    init(store: MissionStore) {
+        _viewModel = StateObject(wrappedValue: CreateMissionViewModel(store: store))
+    }
 
     var body: some View {
         NavigationStack {
             VStack {
                 Form {
                     Section(header: Text(i18n.info.localized)) {
-                        TextField(i18n.title.localized, text: $title)
-                        TextField(i18n.description.localized, text: $description, axis: .vertical)
+                        TextField(i18n.title.localized, text: $viewModel.title)
+                        TextField(i18n.description.localized, text: $viewModel.description, axis: .vertical)
                             .lineLimit(3 ... 5)
                     }
                     .listRowBackground(Color(.section))
 
                     Section(i18n.type.localized) {
-                        Picker(i18n.missionType.localized, selection: $selectedMissionType) {
+                        Picker(i18n.missionType.localized, selection: $viewModel.selectedMissionType) {
                             Text(MissionType.main.text).tag(MissionType.main)
                             Text(MissionType.side.text).tag(MissionType.side)
                             Text(MissionType.repeat.text).tag(MissionType.repeat)
@@ -48,15 +39,15 @@ struct CreateMissionView: View {
                     .listRowBackground(Color(.section))
 
                     Section(i18n.story.localized) {
-                        SelectStoryView(selectedStory: $selectedStory, showingStoryPicker: $showingStoryPicker)
+                        SelectStoryView(selectedStory: $viewModel.selectedStory, showingStoryPicker: $viewModel.showingStoryPicker)
                     }
                     .listRowBackground(Color(.section))
 
                     Section(i18n.conditions.localized) {
-                        ConditionListView(conditions: $conditions)
+                        ConditionListView(conditions: $viewModel.conditions)
 
                         Button(action: {
-                            showingAddCondition = true
+                            viewModel.showingAddCondition = true
                         }) {
                             Label(i18n.addCondition.localized, systemImage: "plus.circle")
                                 .foregroundStyle(.black)
@@ -65,10 +56,10 @@ struct CreateMissionView: View {
                     .listRowBackground(Color(.section))
 
                     Section(i18n.reward.localized) {
-                        RewardListView(rewards: $rewards)
+                        RewardListView(rewards: $viewModel.rewards)
 
                         Button(action: {
-                            showingAddReward = true
+                            viewModel.showingAddReward = true
                         }) {
                             Label(i18n.addReward.localized, systemImage: "plus.circle")
                                 .foregroundStyle(.black)
@@ -91,77 +82,26 @@ struct CreateMissionView: View {
 
                 Spacer()
 
-                RichButton(title: i18n.create.localized, color: Color.buttonBackground, icon: "sparkle", disabled: title.isEmpty) {
-                    createMission()
+                RichButton(title: i18n.create.localized, color: Color.buttonBackground, icon: "sparkle", disabled: viewModel.title.isEmpty) {
+                    Task {
+                        await viewModel.createMission()
+                        dismiss()
+                    }
                 }
                 .padding()
             }
-            .sheet(isPresented: $showingStoryPicker) {
-                StoryPickerView(selectedStory: $selectedStory, stories: missionStore.stories)
+            .sheet(isPresented: $viewModel.showingStoryPicker) {
+                StoryPickerView(selectedStory: $viewModel.selectedStory, stories: store.stories)
+                .presentationDetents([.medium])
+            }
+            .sheet(isPresented: $viewModel.showingAddCondition) {
+                AddConditionView(conditions: $viewModel.conditions, showingAddCondition: $viewModel.showingAddCondition)
                     .presentationDetents([.medium])
             }
-            .sheet(isPresented: $showingAddCondition) {
-                AddConditionView(conditions: $conditions, showingAddCondition: $showingAddCondition)
-                    .presentationDetents([.medium])
-            }
-            .sheet(isPresented: $showingAddReward) {
-                AddRewardView(rewards: $rewards, showingAddReward: $showingAddReward)
+            .sheet(isPresented: $viewModel.showingAddReward) {
+                AddRewardView(rewards: $viewModel.rewards, showingAddReward: $viewModel.showingAddReward)
                     .interactiveDismissDisabled()
                     .presentationDetents([.medium])
-            }
-        }
-    }
-
-    private func createMission() {
-        let newMission = Mission(
-            title: title,
-            description: description,
-            status: .todo,
-            type: selectedMissionType,
-            conditions: conditions,
-            rewards: rewards
-        )
-
-        Task {
-            if let storyId = selectedStory?.id {
-                missionStore.addMission(mission: newMission, to: storyId)
-                dismiss()
-            }
-        }
-    }
-}
-
-struct SelectStoryView: View {
-    @Binding var selectedStory: Story?
-    @Binding var showingStoryPicker: Bool
-
-    var body: some View {
-        if let story = selectedStory {
-            HStack {
-                VStack(alignment: .leading) {
-                    Text(story.title)
-                        .font(.headline)
-                    Text(story.content)
-                        .font(.subheadline)
-                        .foregroundColor(.secondary)
-                }
-
-                Spacer()
-
-                Button(action: {
-                    selectedStory = nil
-                }) {
-                    Image(systemName: "xmark.circle.fill")
-                        .foregroundColor(.red)
-                }
-                .buttonStyle(BorderlessButtonStyle())
-            }
-        } else {
-            Button(action: {
-                showingStoryPicker = true
-            }) {
-                Label(i18n.selectStory.localized, systemImage: "book")
-                    .foregroundStyle(.black)
             }
         }
     }
@@ -415,12 +355,53 @@ struct AddRewardView: View {
 }
 
 #Preview {
-    CreateMissionView()
+    CreateMissionView(store: MissionStore())
         .environmentObject(MissionStore())
 }
 
+struct SelectStoryView: View {
+    @Binding var selectedStory: Story?
+    @Binding var showingStoryPicker: Bool
+
+    var body: some View {
+        if let story = selectedStory {
+            HStack {
+                VStack(alignment: .leading) {
+                    Text(story.title)
+                        .font(.headline)
+                    Text(story.content)
+                        .font(.subheadline)
+                        .foregroundColor(.secondary)
+                }
+
+                Spacer()
+
+                Button(action: {
+                    selectedStory = nil
+                }) {
+                    Image(systemName: "xmark.circle.fill")
+                        .foregroundColor(.red)
+                }
+                .buttonStyle(BorderlessButtonStyle())
+            }
+        } else {
+            Button(action: {
+                showingStoryPicker = true
+            }) {
+                Label(i18n.selectStory.localized, systemImage: "book")
+                    .foregroundStyle(.black)
+            }
+        }
+    }
+}
+
 #Preview {
-    StoryPickerView(selectedStory: .constant(nil), stories: [])
+    SelectStoryView(
+        selectedStory: .constant(
+            nil
+        ),
+        showingStoryPicker: .constant(false)
+    )
 }
 
 #Preview {

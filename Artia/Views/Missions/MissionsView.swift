@@ -15,63 +15,54 @@ enum MissionsSheetType: Identifiable, Equatable {
 
 struct MissionsView: View {
     @EnvironmentObject private var store: MissionStore
-    @State var sheetType: MissionsSheetType? = nil
-    @State var selectedStoryId: UUID?
-    @Binding var selectedMissionId: UUID?
+    @StateObject private var viewModel: MissionsViewModel
+
+    init(store: MissionStore) {
+        _viewModel = StateObject(wrappedValue: MissionsViewModel(store: store))
+    }
 
     var body: some View {
         VStack {
-            ChipView(selectedOptionId: $selectedStoryId, options: storyChipOptions)
+            ChipView(selectedOptionId: $viewModel.selectedStoryId, options: viewModel.storyChipOptions)
 
             ScrollView {
                 LazyVStack(spacing: 16) {
-                    let nextMainMissions = nextMissionFilterByStory
-                    let mainMissions = currentMainMissionFilterByStory.filter {
-                        $0.type == .main && $0.status == .doing
-                    }
-                    let sideMissions = missionsFilterByStory.filter {
-                        $0.type == .side
-                    }
-                    let repeatMissions = missionsFilterByStory.filter {
-                        $0.type == .repeat
-                    }
-
-                    if nextMainMissions.isEmpty == false {
-                        TodoMissionList(title: i18n.newMissionAvailable.localized, missions: nextMainMissions) { mission in
-                            showSheet(.take(mission: mission))
-                            selectedMissionId = mission.id
+                    if viewModel.nextMissionFilterByStory.isEmpty == false {
+                        TodoMissionList(title: i18n.newMissionAvailable.localized, missions: viewModel.nextMissionFilterByStory) { mission in
+                            viewModel.showSheet(.take(mission: mission))
+                            viewModel.selectedMissionId = mission.id
                         }
                     }
 
-                    if mainMissions.isEmpty == false {
-                        MissionList(title: i18n.main.localized, missions: mainMissions) { mission in
-                            showSheet(.detail(mission: mission))
+                    if viewModel.mainMissions.isEmpty == false {
+                        MissionList(title: i18n.main.localized, missions: viewModel.mainMissions) { mission in
+                            viewModel.showSheet(.detail(mission: mission))
 
-                            selectedMissionId = mission.id
+                            viewModel.selectedMissionId = mission.id
                         }
                     }
 
-                    if sideMissions.isEmpty == false {
-                        MissionList(title: i18n.side.localized, missions: sideMissions) { mission in
-                            showSheet(.detail(mission: mission))
-                            selectedMissionId = mission.id
+                    if viewModel.sideMissions.isEmpty == false {
+                        MissionList(title: i18n.side.localized, missions: viewModel.sideMissions) { mission in
+                            viewModel.showSheet(.detail(mission: mission))
+                            viewModel.selectedMissionId = mission.id
                         }
                     }
 
-                    if repeatMissions.isEmpty == false {
-                        MissionList(title: i18n.repeat.localized, missions: repeatMissions) { mission in
-                            showSheet(.detail(mission: mission))
-                            selectedMissionId = mission.id
+                    if viewModel.repeatMissions.isEmpty == false {
+                        MissionList(title: i18n.repeat.localized, missions: viewModel.repeatMissions) { mission in
+                            viewModel.showSheet(.detail(mission: mission))
+                            viewModel.selectedMissionId = mission.id
                         }
                     }
 
-                    if hasAnyMissionAvailable == false {
+                    if viewModel.hasAnyMissionAvailable == false {
                         VStack(spacing: 20) {
                             Image(systemName: "tray")
                                 .font(.system(size: 50))
                                 .foregroundColor(.gray)
 
-                            if selectedStoryId != nil {
+                            if viewModel.selectedStoryId != nil {
                                 Text(i18n.noMissionInThisStory.localized)
                                     .font(.headline)
                                     .foregroundColor(.gray)
@@ -88,87 +79,14 @@ struct MissionsView: View {
                 .padding()
             }
         }
-        .onChange(of: sheetType) { /* Don't remove this, this can keep showing mission detail work. */ }
-        .sheet(item: $sheetType) { sheetType in
+        .onChange(of: viewModel.sheetType) { /* Don't remove this, this can keep showing mission detail work. */ }
+        .sheet(item: $viewModel.sheetType) { sheetType in
             switch sheetType {
             case let .take(mission):
                 TakeMissionDetailView(mission: mission)
             case let .detail(mission):
                 MissionDetailView(mission: mission)
             }
-        }
-    }
-
-    var missionsFilterByStory: [Mission] {
-        if let selectedStoryId = selectedStoryId {
-            return store.stories
-                .first { $0.id == selectedStoryId }?.missions
-                .filter({  $0.status == .doing })
-                ?? []
-        } else {
-            return store.stories.flatMap { $0.missions }
-                .filter({ $0.status == .doing })
-        }
-    }
-    
-    var hasAnyMissionAvailable: Bool {
-        var missions: [Mission] = []
-        if let selectedStoryId = selectedStoryId {
-            missions = store.stories
-                .first { $0.id == selectedStoryId }?.missions
-                .filter({ $0.status == .doing || $0.status == .todo })
-                ?? []
-        } else {
-            missions = store.stories.flatMap { $0.missions }
-                .filter({ $0.status == .doing || $0.status == .todo })
-        }
-        
-        return missions.isEmpty == false
-    }
-
-    var currentMainMissionFilterByStory: [Mission] {
-        if let selectedStoryId = selectedStoryId {
-            if let mission = store.stories.first(where: { $0.id == selectedStoryId })?.currentMainMissions {
-                return [mission]
-            } else {
-                return []
-            }
-        } else {
-            return store.stories.compactMap { $0.currentMainMissions }
-        }
-    }
-
-    var nextMainMissionFilterByStory: [Mission] {
-        if let selectedStoryId = selectedStoryId {
-            if let mission = store.stories.first(where: { $0.id == selectedStoryId })?.nextMainMission {
-                return [mission]
-            } else {
-                return []
-            }
-        } else {
-            return store.stories.compactMap { $0.nextMainMission }
-        }
-    }
-
-    var nextMissionFilterByStory: [Mission] {
-        if let selectedStoryId = selectedStoryId {
-            if let story = store.stories.first(where: { $0.id == selectedStoryId }) {
-                return story.todoMissions
-            } else {
-                return []
-            }
-        } else {
-            return store.stories.flatMap { $0.todoMissions }
-        }
-    }
-
-    private var storyChipOptions: [ChipOption] {
-        store.stories.map { ChipOption(id: $0.id, title: $0.title) }
-    }
-
-    private func showSheet(_ type: MissionsSheetType) {
-        DispatchQueue.main.async {
-            sheetType = type
         }
     }
 }
@@ -306,6 +224,6 @@ struct TodoMissionCard: View {
 }
 
 #Preview {
-    MissionsView(selectedMissionId: .constant(nil))
+    MissionsView(store: MissionStore())
         .environmentObject(MissionStore())
 }

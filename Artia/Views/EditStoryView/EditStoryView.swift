@@ -4,19 +4,11 @@ struct EditStoryView: View {
     @Environment(\.dismiss) private var dismiss
     @Environment(\.editMode) private var editMode
     @EnvironmentObject private var store: MissionStore
-    @State private var story: Story
-    @State private var title: String
-    @State private var content: String
-    @State private var sheetType: EditStoryViewSheetType?
-    @State private var missions: [Mission]
+    @StateObject private var viewModel: EditStoryViewModel
     var completion: () -> Void = {}
 
-    init(story: Story, completion: @escaping () -> Void = {}) {
-        self.story = story
-        title = story.title
-        content = story.content
-        sheetType = nil
-        missions = story.missions
+    init(store: MissionStore, story: Story, completion: @escaping () -> Void = {}) {
+        _viewModel = StateObject(wrappedValue: EditStoryViewModel(store: store, story: story))
         self.completion = completion
     }
 
@@ -25,21 +17,21 @@ struct EditStoryView: View {
             VStack {
                 Form {
                     Section(i18n.info.localized) {
-                        TextField(i18n.title.localized, text: $title)
+                        TextField(i18n.title.localized, text: $viewModel.title)
                     }
                     .listRowBackground(Color(.section))
 
                     Section(i18n.content.localized) {
-                        TextEditor(text: $content)
+                        TextEditor(text: $viewModel.content)
                             .frame(minHeight: 100)
                     }
                     .listRowBackground(Color(.section))
 
                     Section {
-                        MissionList(missions: $missions, story: $story)
+                        MissionList(missions: $viewModel.missions, story: $viewModel.story)
 
                         Button(action: {
-                            sheetType = .addMission
+                            viewModel.sheetType = .addMission
                         }) {
                             Label(i18n.addMission.localized, systemImage: "plus.circle")
                                 .foregroundStyle(.black)
@@ -64,11 +56,7 @@ struct EditStoryView: View {
                 Spacer()
 
                 RichButton(title: i18n.done.localized, color: .buttonBackground, disabled: false) {
-                    let updatedStory = story
-                    updatedStory.title = title
-                    updatedStory.content = content
-                    updatedStory.missions = missions
-                    store.updateStory(updatedStory)
+                    viewModel.updateStory()
                     completion()
                 }
                 .padding()
@@ -86,12 +74,10 @@ struct EditStoryView: View {
                 }
             }
         }
-        .sheet(item: $sheetType) { sheetType in
+        .sheet(item: $viewModel.sheetType) { sheetType in
             switch sheetType {
-            // case let .editMission(mission):
-            //     EditMissionView(mission: mission, story: story)
             case .addMission:
-                StoryCreateMissionView(missions: $missions)
+                StoryCreateMissionView(missions: $viewModel.missions)
                     .presentationDetents([.medium])
                     .interactiveDismissDisabled()
             }
@@ -100,6 +86,7 @@ struct EditStoryView: View {
 }
 
 private struct MissionList: View {
+    @EnvironmentObject private var store: MissionStore
     @Environment(\.editMode) private var editMode
     @Binding var missions: [Mission]
     @Binding var story: Story
@@ -108,7 +95,7 @@ private struct MissionList: View {
         List {
             ForEach($missions, id: \.id) { $mission in
                 NavigationLink {
-                    EditMissionView(mission: mission, story: story)
+                    EditMissionView(store: store, mission: mission, story: story)
                         .navigationBarBackButtonHidden()
                 } label: {
                     HStack {
@@ -141,5 +128,6 @@ enum EditStoryViewSheetType: Identifiable {
 }
 
 #Preview {
-    EditStoryView(story: MockData.story)
+    EditStoryView(store: MissionStore(), story: MockData.story)
+        .environmentObject(MissionStore())
 }

@@ -10,28 +10,28 @@ import SwiftUI
 struct CreateStoryView: View {
     @EnvironmentObject var store: MissionStore
     @Environment(\.dismiss) private var dismiss
+    @StateObject private var viewModel: CreateStoryViewModel
 
-    @State private var title = ""
-    @State private var description = ""
-    @State private var showingAddMission = false
-    @State private var missions: [Mission] = []
+    init(store: MissionStore) {
+        _viewModel = StateObject(wrappedValue: CreateStoryViewModel(store: store))
+    }
 
     var body: some View {
         NavigationStack {
             VStack {
                 Form {
                     Section(header: Text(i18n.info.localized)) {
-                        TextField(i18n.title.localized, text: $title)
-                        TextField(i18n.description.localized, text: $description, axis: .vertical)
+                        TextField(i18n.title.localized, text: $viewModel.title)
+                        TextField(i18n.description.localized, text: $viewModel.description, axis: .vertical)
                             .lineLimit(4 ... 6)
                     }
                     .listRowBackground(Color(.section))
 
                     Section(i18n.missions.localized) {
-                        MissionList(missions: $missions, deleteMission: deleteMission)
+                        MissionList(missions: $viewModel.missions, deleteMission: viewModel.deleteMission)
 
                         Button(action: {
-                            showingAddMission = true
+                            viewModel.showingAddMission = true
                         }) {
                             Label(i18n.addMission.localized, systemImage: "plus.circle")
                                 .foregroundStyle(.black)
@@ -51,9 +51,9 @@ struct CreateStoryView: View {
                         .tint(.black)
                     }
                 }
-                .sheet(isPresented: $showingAddMission) {
-                    StoryCreateMissionView(missions: $missions) {
-                        showingAddMission = false
+                .sheet(isPresented: $viewModel.showingAddMission) {
+                    StoryCreateMissionView(missions: $viewModel.missions) {
+                        viewModel.showingAddMission = false
                     }
                     .presentationDetents([.medium])
                     .interactiveDismissDisabled()
@@ -61,28 +61,14 @@ struct CreateStoryView: View {
 
                 Spacer()
 
-                RichButton(title: i18n.create.localized, color: Color.buttonBackground, icon: "sparkle", disabled: title.isEmpty) {
-                    saveStory()
+                RichButton(title: i18n.create.localized, color: Color.buttonBackground, icon: "sparkle", disabled: viewModel.title.isEmpty) {
+                    viewModel.saveStory {
+                        dismiss()
+                    }
                 }
                 .padding()
             }
         }
-    }
-
-    private func deleteMission(at index: IndexSet) {
-        // remove mission by index
-        missions.remove(atOffsets: index)
-    }
-
-    private func saveStory() {
-        let story = Story(
-            title: title,
-            content: description,
-            missions: missions
-        )
-
-        store.addStory(story)
-        dismiss()
     }
 }
 
@@ -203,7 +189,7 @@ struct StoryCreateMissionView: View {
 }
 
 #Preview("CreateStoryView") {
-    CreateStoryView()
+    CreateStoryView(store: MissionStore())
         .environmentObject(MissionStore())
 }
 

@@ -1,75 +1,44 @@
 import Foundation
 import SwiftUI
 
-enum TabType {
-    case user
-    case creator
-}
-
-enum Tab: String {
-    // User
-    case missions
-    case journey
-
-    // Creator
-    case creator
-    
-    var title: String {
-        switch self {
-        case .missions:
-            return i18n.missions.localized
-        case .journey:
-            return i18n.journey.localized
-        case .creator:
-            return i18n.creator.localized
-        }
-    }
-}
-
 struct HomeView: View {
     @EnvironmentObject private var store: MissionStore
-
-    @State var selectedTabType: TabType = .user
-    @State var selectedTab: Tab = .missions
-    
-    @State private var missionsSheetType: MissionsSheetType? = nil
-
-    @State private var selectedMissionId: UUID?
+    @StateObject private var viewModel = HomeViewModel()
 
     var body: some View {
         VStack {
             TopTabView(
-                selectedTabType: $selectedTabType,
-                selectedTab: $selectedTab
+                selectedTabType: $viewModel.selectedTabType,
+                selectedTab: $viewModel.selectedTab
             )
 
-            TabView(selection: $selectedTab) {
+            TabView(selection: $viewModel.selectedTab) {
                 JourneyView()
                     .tag(Tab.journey)
 
-                MissionsView(selectedMissionId: $selectedMissionId)
+                MissionsView(store: store)
                     .tag(Tab.missions)
 
                 CreatorView()
                     .tag(Tab.creator)
             }
             .tabViewStyle(PageTabViewStyle(indexDisplayMode: .never))
-            .onChange(of: selectedTabType) {
-                switch selectedTabType {
+            .onChange(of: viewModel.selectedTabType) {
+                switch viewModel.selectedTabType {
                 case .user:
-                    selectedTab = .missions
+                    viewModel.selectedTab = .missions
                 case .creator:
-                    selectedTab = .creator
+                    viewModel.selectedTab = .creator
                 }
             }
-            .onChange(of: selectedTab) {
-                switch selectedTab {
+            .onChange(of: viewModel.selectedTab) {
+                switch viewModel.selectedTab {
                 case .journey:
-                    selectedTabType = .user
+                    viewModel.selectedTabType = .user
                 case .missions:
-                    selectedTabType = .user
+                    viewModel.selectedTabType = .user
                 case .creator:
-                    selectedTabType = .creator
+                    viewModel.selectedTabType = .creator
                 }
             }
 

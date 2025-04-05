@@ -66,7 +66,7 @@ struct MissionPickerView: View {
                 List {
                     ForEach(filteredMissions) { mission in
                         NavigationLink {
-                            EditMissionView(mission: mission, story: store.getStory(by: mission)!) {
+                            EditMissionView(store: store, mission: mission, story: store.getStory(by: mission)!) {
                                 completion()
                             }
                                 .navigationBarBackButtonHidden()

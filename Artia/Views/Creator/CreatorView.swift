@@ -11,16 +11,14 @@ enum CreatorViewSheetType: Identifiable {
     var id: UUID { UUID() }
     case createMission
     case createStory
-    case selectStory
-    case selectMission
+    case editStory
+    case editMission
 }
 
 struct CreatorView: View {
     @EnvironmentObject private var store: MissionStore
     @Environment(\.dismiss) private var dismiss
-    @State private var selectedStory: Story?
-    @State private var sheetType: CreatorViewSheetType?
-    @State private var selectedMission: Mission?
+    @StateObject private var viewModel: CreatorViewModel = .init()
 
     var body: some View {
         ScrollView {
@@ -37,31 +35,31 @@ struct CreatorView: View {
                 }
 
                 ShortcutButton(icon: "book.fill", title: i18n.editStory.localized, color: Color.buttonBackground) {
-                    showSheet(.selectStory)
+                    showSheet(.editStory)
                 }
 
                 ShortcutButton(icon: "book.fill", title: i18n.editMission.localized, color: Color.buttonBackground) {
-                    showSheet(.selectMission)
+                    showSheet(.editMission)
                 }
             }
             .padding()
         }
-        .sheet(item: $sheetType) { type in
+        .sheet(item: $viewModel.sheetType) { type in
             switch type {
             case .createMission:
-                CreateMissionView()
+                CreateMissionView(store: store)
                     .interactiveDismissDisabled()
             case .createStory:
-                CreateStoryView()
+                CreateStoryView(store: store)
                     .interactiveDismissDisabled()
-            case .selectStory:
-                StoryPickerView(selectedStory: $selectedStory, stories: store.stories.map({$0.copy()})) {
-                    sheetType = nil
+            case .editStory:
+                StoryPickerEditView(stories: store.stories.map { $0.copy() }) {
+                    viewModel.sheetType = nil
                     dismiss()
                 }
-            case .selectMission:
-                MissionPickerView(selectedMission: $selectedMission) { 
-                    sheetType = nil
+            case .editMission:
+                MissionPickerView(selectedMission: $viewModel.selectedMission) {
+                    viewModel.sheetType = nil
                     dismiss()
                 }
             }
@@ -70,7 +68,7 @@ struct CreatorView: View {
 
     private func showSheet(_ type: CreatorViewSheetType) {
         DispatchQueue.main.async {
-            sheetType = type
+            viewModel.sheetType = type
         }
     }
 }

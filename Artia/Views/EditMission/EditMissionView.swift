@@ -2,36 +2,15 @@ import PhotosUI
 import SwiftUI
 
 struct EditMissionView: View {
-    @EnvironmentObject var missionStore: MissionStore
+    @EnvironmentObject var store: MissionStore
     @Environment(\.dismiss) private var dismiss
+    @StateObject private var viewModel: EditMissionViewModel
 
-    let mission: Mission
+    var completion: () -> Void = {}
 
-    @State private var title: String
-    @State private var description: String
-    @State private var selectedMissionType: MissionType
-    @State private var selectedStory: Story?
-    @State private var showingStoryPicker = false
-
-    // Condition states
-    @State private var conditions: [any MissionCondition]
-    @State private var showingAddCondition = false
-
-    // Reward states
-    @State private var rewards: [MissionReward]
-    @State private var showingAddReward = false
-
-    var completion: () -> Void = { }
-    
-    init(mission: Mission, story: Story, completion: @escaping () -> Void = { }) {
-        self.mission = mission
-
-        _title = State(initialValue: mission.title)
-        _description = State(initialValue: mission.description)
-        _selectedMissionType = State(initialValue: mission.type)
-        _conditions = State(initialValue: mission.conditions)
-        _rewards = State(initialValue: mission.rewards)
-        _selectedStory = State(initialValue: story)
+    init(store: MissionStore, mission: Mission, story: Story, completion: @escaping () -> Void = {}) {
+        _viewModel = StateObject(wrappedValue: EditMissionViewModel(store: store, mission: mission, story: story)
+        )
         self.completion = completion
     }
 
@@ -40,14 +19,14 @@ struct EditMissionView: View {
             VStack {
                 Form {
                     Section(header: Text(i18n.info.localized)) {
-                        TextField(i18n.title.localized, text: $title)
-                        TextField(i18n.description.localized, text: $description, axis: .vertical)
+                        TextField(i18n.title.localized, text: $viewModel.title)
+                        TextField(i18n.description.localized, text: $viewModel.description, axis: .vertical)
                             .lineLimit(3 ... 5)
                     }
                     .listRowBackground(Color(.section))
 
                     Section(i18n.type.localized) {
-                        Picker(i18n.type.localized, selection: $selectedMissionType) {
+                        Picker(i18n.type.localized, selection: $viewModel.selectedMissionType) {
                             Text(MissionType.main.text).tag(MissionType.main)
                             Text(MissionType.side.text).tag(MissionType.side)
                             Text(MissionType.repeat.text).tag(MissionType.repeat)
@@ -57,15 +36,15 @@ struct EditMissionView: View {
                     .listRowBackground(Color(.section))
 
                     Section(i18n.story.localized) {
-                        SelectStoryView(selectedStory: $selectedStory, showingStoryPicker: $showingStoryPicker)
+                        SelectStoryView(selectedStory: $viewModel.selectedStory, showingStoryPicker: $viewModel.showingStoryPicker)
                     }
                     .listRowBackground(Color(.section))
 
                     Section(i18n.conditions.localized) {
-                        ConditionListView(conditions: $conditions)
+                        ConditionListView(conditions: $viewModel.conditions)
 
                         Button(action: {
-                            showingAddCondition = true
+                            viewModel.showingAddCondition = true
                         }) {
                             Label(i18n.addCondition.localized, systemImage: "plus.circle")
                                 .foregroundStyle(.black)
@@ -74,10 +53,10 @@ struct EditMissionView: View {
                     .listRowBackground(Color(.section))
 
                     Section(i18n.reward.localized) {
-                        RewardListView(rewards: $rewards)
+                        RewardListView(rewards: $viewModel.rewards)
 
                         Button(action: {
-                            showingAddReward = true
+                            viewModel.showingAddReward = true
                         }) {
                             Label(i18n.addReward.localized, systemImage: "plus.circle")
                                 .foregroundStyle(.black)
@@ -102,46 +81,30 @@ struct EditMissionView: View {
 
                 Spacer()
 
-                RichButton(title: i18n.save.localized, color: Color.buttonBackground, icon: "sparkle", disabled: title.isEmpty) {
-                    saveMission()
+                RichButton(title: i18n.save.localized, color: Color.buttonBackground, icon: "sparkle", disabled: viewModel.title.isEmpty) {
+                    viewModel.saveMission()
                     completion()
                 }
                 .padding()
             }
-            .sheet(isPresented: $showingStoryPicker) {
-                StoryPickerView(selectedStory: $selectedStory, stories: missionStore.stories)
+            .sheet(isPresented: $viewModel.showingStoryPicker) {
+                StoryPickerView(selectedStory: $viewModel.selectedStory, stories: store.stories)
                     .presentationDetents([.medium])
             }
-            .sheet(isPresented: $showingAddCondition) {
-                AddConditionView(conditions: $conditions, showingAddCondition: $showingAddCondition)
+            .sheet(isPresented: $viewModel.showingAddCondition) {
+                AddConditionView(conditions: $viewModel.conditions, showingAddCondition: $viewModel.showingAddCondition)
                     .presentationDetents([.medium])
             }
-            .sheet(isPresented: $showingAddReward) {
-                AddRewardView(rewards: $rewards, showingAddReward: $showingAddReward)
+            .sheet(isPresented: $viewModel.showingAddReward) {
+                AddRewardView(rewards: $viewModel.rewards, showingAddReward: $viewModel.showingAddReward)
                     .interactiveDismissDisabled()
                     .presentationDetents([.medium])
             }
         }
     }
-
-    private func saveMission() {
-        guard let selectedStory else { return }
-
-        let updatedMission = Mission(
-            id: mission.id,
-            title: title,
-            description: description,
-            status: mission.status,
-            type: selectedMissionType,
-            conditions: conditions,
-            rewards: rewards
-        )
-
-        missionStore.updateMission(mission: updatedMission, in: selectedStory)
-    }
 }
 
 #Preview {
-    EditMissionView(mission: MockData.mission, story: MockData.story)
+    EditMissionView(store: MissionStore(), mission: MockData.mission, story: MockData.story)
         .environmentObject(MissionStore())
 }
